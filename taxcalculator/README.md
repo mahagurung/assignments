@@ -15,7 +15,7 @@ To test, run test_taxcalculator.py with no arguments. It expects the following f
 - output2.txt - Matching output for sample2.csv
 - output3.txt - Matching output for sample3.csv
 
-#Requirements
+## Requirements
 - python3.x
 - csv
 - argparse
