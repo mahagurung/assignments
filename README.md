@@ -1,2 +1,2 @@
 # assignments
-Placeholder for coursework and assignments
+Placeholder for courseworks and assignments
