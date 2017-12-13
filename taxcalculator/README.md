@@ -14,3 +14,8 @@ sample6.csv - Inpute file with non-integer value in numeric field
 output1.txt - Matching output for sample1.csv
 output2.txt - Matching output for sample2.csv
 output3.txt - Matching output for sample3.csv
+
+#Requirements
+-- python3.x
+-- csv
+-- argparse
