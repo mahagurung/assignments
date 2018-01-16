@@ -1,21 +1,14 @@
-Analysis of the problem
-=
+# Analysis of the problem
 
-
-
-Proposed Data Structures
-=
-
+# Proposed Data Structures
 If we split the whole data by year - month, day and sensor type counts and values are pre-known across individual year. For example, each year has 12 months and each month has 28-31 days depending on the month. Same is the case for sensor types. By making use of this fact, we can do all the select operations for a specific date and sensor type with a constant efficiency if we use hashmaps.
 
 For example:
 YEAR[2016][2][14][T] = (Data set of all temperature readings on 14th February 2016)
 
-
 To select the given date's data set of readings for a specific sensor, a combination of following hashmaps are used.
 
-Year
--
+## Year
 year_hashmap = [0,1,2.....9]
 
 For the year_hashmap a simple modular hashing function with a linear collision resolution can be used on an array of 10 elements. Each element in the year_hashmap is an object of month_hashmap. Since we have 10 years worth of data, the array is of size 10. //Describe why modular hash and linear collision resolution//
@@ -24,9 +17,7 @@ eg: year_hashmap[2016] = new month_hashmap
 
 //Insert a diagram
 
-
-Month
--
+## Month
 month_hashmap = [0,1,....12]
 
 The month_hashmap uses an array of size 13, with a hashing function where index is equal to the  numeric value of the month. The output of this hashing function is always unique, hence there is no need for a collision resolution function. month_hashmap[0] is set to null so that the actual index begins from 1 and goes upto 12.
@@ -50,8 +41,7 @@ eg: month_hashmap[APR] = new day_hashmap
 
 //Insert a diagram
 
-Day
--
+## Day
 day_hashmap = [0,1,2.......32]
 
 The day_hashmap is an array of size 32 where index 0 always points to null. The hash function returns the day number as index. Each element is the day_hashmap is an object of sensor_hashmap.
@@ -59,9 +49,7 @@ The day_hashmap is an array of size 32 where index 0 always points to null. The 
 eg: day_hashmap[27] = new sensor_hashmap
 //Insert a diagram
 
-Sensor
--
-
+## Sensor
 Since we know the number of sensor types, data sets per sensor can also be stored in a hashmap. The hashing function takes the sensor type as an input and returns the index.
 
 Example:
@@ -83,40 +71,54 @@ H(Dta) = 14
 H(Dts) = 15
 H(Sx) = 16
 
-
-Daily readings
--
-
+## Daily readings
 The goal in the design of data set for daily readings are to do the following actions efficiently:
 1) Find the max and/or min values 
 2) Find average value
 3) Find the time associated with any given value
-4) Find the value given the time
+4) Find the value for a given time
 5) Insert new items
+6) Find the highest values including duplicates
 
-To acheive all of the above the data set should be searchable and sequentially accessible along with helper functions for (3) and (4). Inserts should be preferrably of constant speed. We can ignore deletes as we seldom delete records from this data set.
+We need a custom data structure with the following data members and methods:
 
-Algorithms
-=
+#### Data members
+- Set of values
+- Max/min
+- Average
 
-1. The maximum wind speed of a specified month and year.
--
+#### Methods
+- Insert new record
+- Find the time of a given value
+- Find the value of a given time
+- Find the highest value(s) including duplicates in reverse chronological order
 
-2. The median wind speed of a specified year.
--
+Object:
+  float max
+  float average
+  float values[]
 
-3. Average wind speed for each month of a specified year in the order of month
--
+  insert_record()
+  find_time_from_value()
+  find_value_from_time()
+  find_highest_order_by_time()
 
-4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
--
+// Insert a class diagram
 
-5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
--
+# Algorithms
 
+## 1. The maximum wind speed of a specified month and year.
+Input: Int year, month
+Output:
 
-Conclusion
-=
+## 2. The median wind speed of a specified year.
 
-Space and time requirement
--
+## 3. Average wind speed for each month of a specified year in the order of month
+
+## 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
+
+## 5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
+
+# Conclusion
+
+## Space and time requirement
