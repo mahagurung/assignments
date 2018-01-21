@@ -4,7 +4,7 @@
 If we split the whole data by year - month, day and sensor type counts and values are pre-known across individual year. For example, each year has 12 months and each month has 28-31 days depending on the month. Same is the case for sensor types. By making use of this fact, we can do all the select operations for a specific date and sensor type with a constant efficiency if we use hashmaps.
 
 For example:
-YEAR[2016][2][14][T] = (Data set of all temperature readings on 14th February 2016)
+READINGS[2016][2][14][T] = (Object of custom data structure (class) for temperature readings on 14th February 2016)
 
 To select the given date's data set of readings for a specific sensor, a combination of following hashmaps are used.
 
@@ -108,12 +108,42 @@ Object:
 # Algorithms
 
 ## 1. The maximum wind speed of a specified month and year.
-Input: Int year, month
-Output:
+Input: Integer year, String month
+Output: Integer wind_speed
+
+Pseudo Code:
+
+function get_max_wind_speed(year, month)
+  max = 0
+  for day in READINGS[year][month]
+    current_max = day[S].get_max() // get_max is a method in daily readings class
+    if current_max > max
+      max = current_max
+    end if
+  end for
+  return max
+end function
 
 ## 2. The median wind speed of a specified year.
 
 ## 3. Average wind speed for each month of a specified year in the order of month
+Input: Integer year
+Output: Array of Integers avg_wind_speed (sorted in the order of month)
+
+Pseudo Code:
+
+function get_avg_wind_speed(year)
+  array_of_avg_wind_speed = []
+  for index 1 to 12
+    month_sum = 0
+    for day in READINGS[year][index]
+      month_sum = month_sum + day[S].get_average // get_average is a method in daily readings class
+    end for
+    month_average = month_sum / READINGS[year][index].length() // sum of averages == average of sums
+    array_of_avg_wind_speed.push(month_average)
+  end for
+
+  return array_of_avg_wind_speed
 
 ## 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
 
