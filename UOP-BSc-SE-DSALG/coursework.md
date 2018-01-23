@@ -44,7 +44,7 @@ h(DEC) = 12
 ```  
 Each element in the monthHashmap is a daysArray.  
 ```
-monthHashmap[APR] = new day_array[]
+monthHashmap[APR] = new daysArray[]
 ```
 //Insert a diagram
 
@@ -121,8 +121,8 @@ A class data structure of the following blue print can be used to store the dail
 - Return max value
 - Return total readings
 - Return average reading
-- Find time given an index
-- Find index given a time
+- Return time given an index
+- Return index given a time
   
 #### Pseudo Code:  
 ```
@@ -153,7 +153,7 @@ class DailyReadings():
     average =  total / (readings.length - 1)
   end function
 
-  function findTimeFromIndex(index):
+  function getTimeFromIndex(index):
     //Assuming that time is the string representation of HH:MM in 24 hours format
     
     totalMinutes = index * 5
@@ -163,7 +163,7 @@ class DailyReadings():
     return hour + ":" + minutes
   end function
 
-  function findIndexFromTime(hours, minutes):
+  function getIndexFromTime(hours, minutes):
     totalMinutes = (hours * 60) + minutes
     index = totalMinutes / 5
     return index
@@ -194,7 +194,7 @@ class DailyReadings():
   end function
 
   function getValueAtTime(hours, minutes):
-    index = findIndexFromTime(hours, minutes)
+    index = getIndexFromTime(hours, minutes)
     return getValueAtIndex(index)
   end function
 
@@ -229,15 +229,25 @@ end function
 ```
 
 ## 2. The median wind speed of a specified year.
+Input: Integer year
+Output: Float median wind speed
 
+Pseudo Code:
+```
+function getMedianWindSpeed(year):
+
+end function
+
+```
 ## 3. Average wind speed for each month of a specified year in the order of month
 Input: Integer year  
 Output: Array of Integers averageWindSpeed (sorted in the order of month)  
 
 Pseudo Code:
 ```
-function getAverageWindSpeed(year)
+function getAverageWindSpeed(year):
   averageWindSpeed = []
+
   for month in JAN FEB MAR APR JUN JUL AUG SEP OCT NOV DEC:
     monthAverageTotal = 0
     numberOfDays = 0
@@ -247,7 +257,7 @@ function getAverageWindSpeed(year)
 
       if day not NULL:
         numberOfDays = numberOfDays + 1
-        monthAverageTotal = monthAverageTotal + day[S].getAverage // getAverage is a method in daily readings class
+        monthAverageTotal = monthAverageTotal + day[S].getAverage() // getAverage() is a method in DailyReadings class
       end if
     end for
 
@@ -261,11 +271,60 @@ end function
 
 ## 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
 Input: Integer year  
-Output: Array of Integers totalSolarRadiation (sorted descending order)  
+Output: Array (size 12) of Integers totalSolarRadiation (sorted descending order)  
 
+Pseudo Code:
+```
+function getTotalSolarRadiation(year):
+  totalSolarRadiation = []
+
+  for month in JAN FEB MAR APR JUN JUL AUG SEP OCT NOV DEC:
+    monthTotal = 0
+
+    for index 1 to 31:
+      day = READINGS[year][month][index]
+
+      if day not NULL:
+        monthTotal = monthTotal + day[SR].getTotal()     // getTotal() is a method in DailyReadings class
+      end if
+    end for
+
+    // Insert monthTotal into correct position in the array
+
+    for index 0 to 11:
+      if totalSolarRadiation[index] is NULL:
+        totalSolarRadiation[index] = monthTotal
+        break for loop
+      else if monthTotal > totalSolarRadiation[index]:
+        push elements from index upto end one step to the right
+        totalSolarRadiation[index] = monthTotal
+        break for loop
+      end if
+    end for
+
+  end for
+
+  return totalSolarRadiation
+end function
+```
 
 ## 5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
+Input: Integer Year, String Month, Integer Day
+Output: String representation of time as HH:MM in 24 hour format
 
+Pseudo Code:  
+```
+function getHighestSolarRadiationTimes(year, month, day):
+
+  srDailyReadingsInstance = READINGS[year][month][day][SR]
+  maxReadingsIndices = srDailyReadingsInstance.getMaxIndices()     // getMaxIndices() is a method in DailyReadings class
+
+  for index in maxReadingsIndices.length to 0:   // getMaxIndices() method returns the array of indexes sorted in chronological order by default.
+    print srDailyReadingsInstance.getTimeFromIndex(maxReadingsIndices[index])   // getTimeFromIndex() is a method in DailyReadings class
+  end for
+  
+end function
+```
 # Conclusion
 
 ## Space and time requirement
