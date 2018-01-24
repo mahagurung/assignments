@@ -7,7 +7,7 @@ Since the keys of the input data (Year, Month, Day, Sensor Type) are pre-known a
 For example to get the object of class data structure for Wind Speeds on 2nd February 2014:  
 READINGS[2014][FEB][2][S] -> Object of DailyReadings  
 
-!["Example data structure layout"] (./data_structure_layout.png)
+![Example data structure layout] (data_structure_layout.png)
 
 Details of various hashmaps implementation are explained below.
 ## Year
