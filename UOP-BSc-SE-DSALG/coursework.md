@@ -1,13 +1,14 @@
 # Analysis of the problem
-The goal of the exercise is to store 10 years worth of 5 min interval sensor readings in such a way that lookups can be done efficiently. One main charactersitic of the given data is that the storage requirements are constant. ie we know that the data is for 10 years and every year has 12 months. The number of days in every month is known and so is the total number of readings per sensor per day (One reading per 5 mins - 288 readings per sensor per day).  
-A common requirement in the problem set is the ability to get the value, given a sensor type and date (year, month and/or day). It one of the questions also asks for the exact time stamp of the reading.  
-Values like maximum, average and total can be calculated along with inserts to avoid redundant linear parsing of sensor readings, hence the proposed data structure should support this. While searching or sorting the readings, we also need to consider the fact that there could be duplicates and have to choose search and sort algorithms that can handle duplicates. Some cases we might also need to come up with custom algorithms, for example to find max values and their time stamps, including duplicates.
+The goal of the exercise is to store 10 years worth of 5 min interval sensor readings in such a way that lookups can be done efficiently. One main charactersitic of the given data is that the storage requirements are constant. ie we know that the data is for 10 years and every year has 12 months. The number of days in every month is known and so is the total number of readings per sensor per day (One reading per 5 mins - 288 readings per sensor per day). 
 
+A common requirement in the problem set is the ability to get the value, given a sensor type and date (year, month and/or day). One of the questions also asks for the exact time stamp of the reading. 
+
+Values like maximum, average and total can be calculated along with inserts to avoid redundant linear parsing of sensor readings, hence the proposed data structure should support this. While searching or sorting the readings, we also need to consider the fact that there could be duplicates and have to choose search and sort algorithms that can handle duplicates. Some cases we might also need to come up with custom algorithms, for example to find max values and their time stamps, including duplicates.
 # Proposed Data Structures
 Since the keys of the input data (Year, Month, Day, Sensor Type) are pre-known and definite, one of the best options to store the data is hashmaps. Hashmaps lets us do the lookups with constant time complexity, ie O(1). 
 For example to get the object of class data structure for Wind Speeds on 2nd February 2014 a single lookup over the hashmaps fetches the required daily reading data structure.  
 
-READINGS[2014][FEB][2][S] -> Object of DailyReadings  
+READINGS\[2014\]\[FEB\]\[2\]\[S\] -> Object of DailyReadings  
 
 The below diagram shows a visualization of the above call with all the data structures included.
 ![Example data structure layout](./data_structure_layout.svg)
@@ -133,15 +134,15 @@ h(Sx) = 16
 **Element of a sensorHashmap is an object of DailyReadings class**
 ## Daily readings
 The goal in the design of data set for daily readings is to do the following actions efficiently:  
-1) Insert new item
-2) Find the max value(s) including duplicates along with the timestamp
-3) Find average value
+1) Insert new item  
+2) Find the max value(s) including duplicates along with the timestamp  
+3) Find average value  
 4) Find total
 
-We need to use a class data structure to fullfill all these requirements.  
-Daily sensor readings are inserted to an array data field in this class. Max value(s), average and total can be calculated or updated along with insert. Average and total are also stored as data fields. However we need some special considerations for storing the max values.  
+We need to use a class data structure to fullfill all these requirements. Daily sensor readings are inserted to an array data field in this class. Max value(s), average and total can be calculated or updated along with insert. Average and total are also stored as data fields. However we need some special considerations for storing the max values.  
 
 It is a requirement that we not only need the maximum values but also the time associated with the values. We know that readings are taken every 5 mins and that makes total 288 readings per day. If we get the values sorted by time and store these values in an array of size 289 (ie index 0 - 288) starting from index 1, the nth item will be the reading at (n * 5)th minute.  
+
 In short given an index n, we can find the time as below.
 ```
 totalMinutes = n * 5  
