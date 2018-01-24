@@ -1,15 +1,16 @@
 # Analysis of the problem
 The goal of the exercise is to store 10 years worth of 5 min interval sensor readings in such a way that lookups can be done efficiently. One main charactersitic of the given data is that the storage requirements are constant. ie we know that the data is for 10 years and every year has 12 months. The number of days in every month is known and so is the total number of readings per sensor per day (One reading per 5 mins - 288 readings per sensor per day).  
-Looking at the questions that needs to be solved, we can see that a common requirement is the ability to get the value, given a sensor type and date (year, month and/or day). It is also needed in some scenerios that we need the exact time stamp when the reading was taken. Values like maximum, average and total can be calculated along with inserts to avoid redundant linear parsing of sensor readings hence the proposed data structure should support this. While searching or sorting the readings, we also need to consider the fact that there could be duplicates and have to choose search and sort algorithms that can handle duplicates. Some cases we might also need to come up with custom algorithms to find max values including duplicates.
+Looking at the questions that needs to be solved, we can see that a common requirement is the ability to get the value, given a sensor type and date (year, month and/or day). It is also needed in some scenerios that we need the exact time stamp when the reading was taken. Values like maximum, average and total can be calculated along with inserts to avoid redundant linear parsing of sensor readings, hence the proposed data structure should support this. While searching or sorting the readings, we also need to consider the fact that there could be duplicates and have to choose search and sort algorithms that can handle duplicates. Some cases we might also need to come up with custom algorithms to find max values including duplicates.
 
 # Proposed Data Structures
 Since the keys of the input data (Year, Month, Day, Sensor Type) are pre-known and definite, one of the best options to store these data is hashmaps.  
-For example:  
-READINGS[2016][2][14][T] = (Object of class data structure for temperature readings on 14th February 2016)  
+For example to get the object of class data structure for Wind Speeds on 2nd February 2014:  
+READINGS[2014][FEB][2][S] -> Object of DailyReadings  
+
+![alt text] (data_structure_layout.png)
 
 Details of various hashmaps implementation are explained below.
 ## Year
-yearHashmap = [0,1,2.....9]  
 
 For the yearHashmap a simple modular hashing function with a linear collision resolution can be used on an array of 10 elements. 
 ```
@@ -18,16 +19,26 @@ h(k) = k mod m
 where k = year and m = 10.  
 Ex: h(2016) = 2016 mod 10 = 6  
 
+| Key | Index |
+|-----|:-----:|
+|2007 |7
+|2008 |8
+|2009 |9
+|2010 |0
+|2011 |1
+|2012 |2
+|2013 |3
+|2014 |4
+|2015 |5
+|2016 |6
+
 Each element in the yearHashmap is an object of monthHashmap.  
 ```
-yearHashmap[2016] = new monthHashmap  
+yearHashmap[2016] -> monthHashmap[]  
 ```
-//Insert a diagram
-
 ## Month
-monthHashmap = [0,1,....12]  
 
-The monthHashmap uses an array of size 13, with a hashing function where index is equal to the  numeric value of the month. The output of this hashing function is always unique, hence there is no need for a collision resolution function. monthHashmap[0] is set to null so that the actual index begins from 1 and goes upto 12.  
+The monthHashmap uses an array of size 13, with a hashing FUNCTION where index is equal to the  numeric value of the month. The output of this hashing FUNCTION is always unique, hence there is no need for a collision resolution FUNCTION. *monthHashmap[0] is set to NULL* so that the actual index begins from 1 and goes upto 12.  
 ```
 h(JAN) = 1  
 h(FEB) = 2  
@@ -41,24 +52,38 @@ h(SEP) = 9
 h(OCT) = 10  
 h(NOV) = 11  
 h(DEC) = 12  
-```  
+```
+
+| Key | Index |
+|-----|:-----:|
+|JAN |1
+|FEB |2
+|MAR |3
+|APR |4
+|MAY |5
+|JUN |6
+|JUL |7
+|AUG |8
+|SEP |9
+|OCT |10
+|NOV |11
+|DEC |12
+
 Each element in the monthHashmap is a daysArray.  
 ```
-monthHashmap[APR] = new daysArray[]
+monthHashmap[APR] -> daysArray[]
 ```
-//Insert a diagram
 
 ## Day  
 daysArray = []
   
 The daysArray is an array of sensorHashmap values. The size of the array is 32 with all values initialized to null. For ease of processing index 0 will alway be null.  
 ```  
-daysArray[] = [NULL, sensorHashmap, sensorHashmap.............]  
+daysArray = [NULL, NULL,....] 
 ```
-//Insert a diagram  
 
 ## Sensor
-Since we know the number of sensor types, data sets per sensor can also be stored in a hashmap. The hashing function takes the sensor type as an input and returns the index.  
+Since we know the number of sensor types, data sets per sensor can also be stored in a hashmap. The hashing FUNCTION takes the sensor type as an input and returns the index.  
 ```  
 h(QFE) = 0  
 h(QFF) = 1  
@@ -78,6 +103,26 @@ h(Dta) = 14
 h(Dts) = 15  
 h(Sx) = 16  
 ```
+
+| Key | Index |
+|-----|:-----:|
+|QFE |0
+|QFF |1
+|QNH |2
+|DP  |3
+|EV  |4
+|RF  |5
+|RH  |6
+|ST1 |7
+|ST2 |8
+|ST3 |9
+|ST4 |10
+|SR  |11
+|T   |12
+|S   |13
+|Dta |14
+|Dts |15
+|Sx  |16
 
 ## Daily readings
 The goal in the design of data set for daily readings are to do the following actions efficiently:  
@@ -126,79 +171,83 @@ A class data structure of the following blue print can be used to store the dail
   
 #### Pseudo Code:  
 ```
-class DailyReadings():
-  int maxIndices = []  
-  float average = 0.0
-  float total = 0.0
-  float readings = []
+CLASS DailyReadings():
+  SET maxIndices = []  
+  SET average = 0.0
+  SET total = 0.0
+  SET readings = []
 
-  function insertRecord():
-    readings.push(value)
+  FUNCTION insertRecord():
+    PUSH value to readings[]
+    SET lastIndex = (length of readings[]) - 1 
 
-    lastIndex = readings.length - 1 
-    
-    if maxIndices.length > 0:
-      currentMax = readings[maxIndices[0]]  // Get the value at current max index
+    IF (length of maxIndices[]) > 0:
+      SET currentMax = readings[maxIndices[0]]  // Get the value at current max index
 
-      if readings[lastIndex] > currentMax:
-        maxIndices = [lastIndex]          // Re-initialize the max indices array with lastIndex as the only member
-      else if readings[lastIndex] == currentMax:
-        maxIndices.push(lastIndex)   // Push lastIndex to maxIndices array if value is equal to the max value (duplicate)
-      end if
-    else:
-      maxIndices.push[lastIndex]         // If max indices array is empty add this one.
-    end if
+      IF readings[lastIndex] > currentMax:
+        SET maxIndices = [lastIndex]          // Re-initialize the max indices array with lastIndex as the only member
+      ELSEIF readings[lastIndex] == currentMax:
+        SET maxIndices.push(lastIndex)   // Push lastIndex to maxIndices array if value is equal to the max value (duplicate)
+      ENDIF
 
-    total += value
-    average =  total / (readings.length - 1)
-  end function
+    ELSE:
+      SET maxIndices.push[lastIndex]         // If max indices array is empty add this one.
+    ENDIF
 
-  function getTimeFromIndex(index):
+    SET total = total + value
+    SET average =  total / (length of readings[] - 1)
+  ENDFUNCTION
+
+  FUNCTION getTimeFromIndex(index):
     //Assuming that time is the string representation of HH:MM in 24 hours format
     
-    totalMinutes = index * 5
-    hour = INTEGER(totalMinutes / 60)
-    minutes = INTEGER(totalMinutes % 60)
+    SET totalMinutes = index * 5
+    SET hour = INTEGER(totalMinutes / 60)
+    SET minutes = INTEGER(totalMinutes % 60)
 
     return hour + ":" + minutes
-  end function
+  ENDFUNCTION
 
-  function getIndexFromTime(hours, minutes):
-    totalMinutes = (hours * 60) + minutes
-    index = totalMinutes / 5
-    return index
-  end function
+  FUNCTION getIndexFromTime(hours, minutes):
+    SET totalMinutes = (hours * 60) + minutes
+    SET index = totalMinutes / 5
+    RETURN index
+  ENDFUNCTION
 
-  function getMaxIndices():
-    return maxIndices
-  end function
+  FUNCTION getMaxIndices():
+    RETURN maxIndices
+  ENDFUNCTION
 
-  function getMax():
+  FUNCTION getMax():
     //Return the numeric max value (no duplicates)
-    if maxIndices.length > 0:
-      return readings[maxIndices[0]]
-    else:
-      return NULL
-    end if
+    IF (length of maxIndices) > 0:
+      RETURN readings[maxIndices[0]]
+    ELSE:
+      RETURN NULL
+    ENDIF
 
-  function getAverage():
-    return average
-  end function
+  FUNCTION getAverage():
+    RETURN average
+  ENDFUNCTION
 
-  function getTotal():
-    return total
-  end function
+  FUNCTION getTotal():
+    RETURN total
+  ENDFUNCTION
 
-  function getValueAtIndex(index):
-    return readings[index]
-  end function
+  FUNCTION getValueAtIndex(index):
+    RETURN readings[index]
+  ENDFUNCTION
 
-  function getValueAtTime(hours, minutes):
-    index = getIndexFromTime(hours, minutes)
-    return getValueAtIndex(index)
-  end function
+  FUNCTION getValueAtTime(hours, minutes):
+    SET index = getIndexFromTime(hours, minutes)
+    RETURN getValueAtIndex(index)
+  ENDFUNCTION
 
-end class
+  FUNCTION getReadings():
+    RETURN readings[]
+  ENDFUNCTION
+
+ENDCLASS
 ```
 // Insert a class diagram  
 
@@ -209,23 +258,23 @@ Output: Integer windSpeed
 
 Pseudo Code:
 ```
-function getMaxWindSpeed(year, month):
-  max = 0
+FUNCTION getMaxWindSpeed(year, month):
+  SET max = 0
 
-  for index 1 to 31:
-    day = READINGS[year][month][index]
+  FOR index 1 to 31:
+    SET day = READINGS[year][month][index]
 
-    if day not NULL:
-      dayMax = day[S].getMax()
-      if dayMax > max:
-        max = dayMax
-      end if
-    end if
-  end for
+    IF day NOT NULL:
+      SET dayMax = day[S].getMax()
+      IF dayMax > max:
+        SET max = dayMax
+      ENDIF
+    ENDIF
+  ENDFOR
 
-  return max
+  RETURN max
 
-end function
+ENDFUNCTION
 ```
 
 ## 2. The median wind speed of a specified year.
@@ -234,9 +283,38 @@ Output: Float median wind speed
 
 Pseudo Code:
 ```
-function getMedianWindSpeed(year):
+FUNCTION getMedianWindSpeed(year):
+  SET windSpeedArray = []
+  
+  FOR m IN 1 TO 12:
+    SET month = READINGS[year][m]
 
-end function
+    FOR d IN 1 TO 31:
+      SET day = month[d]
+
+      IF day NOT NULL:
+        JOIN windSpeedArray AND day[S].getAllReadings()      // getAllReadings member FUNCTION in DailyReadings class returns the array of daily readings
+      ENDIF
+
+    ENDFOR
+
+  ENDFOR
+
+  // Sort the windSpeedArray using QuickSort
+
+  SET sortedWindSpeedArray = QuickSort(windSpeedArray)
+
+  SET pivot = (length of sortedWindSpeedArray)/2
+
+  IF length of sortedWindSpeedArray is odd:
+    SET median = sortedWindSpeedArray[pivot]
+  ELSE:
+    SET median = (sortedWindSpeedArray[pivot] + sortedWindSpeedArray[pivot+1]) / 2
+  ENDIF
+
+  RETURN median
+
+ENDFUNCTION
 
 ```
 ## 3. Average wind speed for each month of a specified year in the order of month
@@ -245,28 +323,28 @@ Output: Array of Integers averageWindSpeed (sorted in the order of month)
 
 Pseudo Code:
 ```
-function getAverageWindSpeed(year):
-  averageWindSpeed = []
+FUNCTION getAverageWindSpeed(year):
+  SET averageWindSpeed = []
 
-  for month in JAN FEB MAR APR JUN JUL AUG SEP OCT NOV DEC:
-    monthAverageTotal = 0
-    numberOfDays = 0
+  FOR month IN (JAN FEB MAR APR JUN JUL AUG SEP OCT NOV DEC):
+    SET monthAverageTotal = 0
+    SET numberOfDays = 0
 
-    for index 1 to 31:
-      day = READINGS[year][month][index]
+    FOR index 1 TO 31:
+      SET day = READINGS[year][month][index]
 
-      if day not NULL:
-        numberOfDays = numberOfDays + 1
-        monthAverageTotal = monthAverageTotal + day[S].getAverage() // getAverage() is a method in DailyReadings class
-      end if
-    end for
+      IF day NOT NULL:
+        SET numberOfDays = numberOfDays + 1
+        SET monthAverageTotal = monthAverageTotal + day[S].getAverage() // getAverage() is a method in DailyReadings class
+      ENDIF
+    ENDFOR
 
-    monthAverage = monthAverageTotal / numberOfDays          // sum of averages == average of sums
-    averageWindSpeed.push(monthAverage)
-  end for
+    SET monthAverage = monthAverageTotal / numberOfDays          // sum of averages == average of sums
+    SET averageWindSpeed.push(monthAverage)
+  ENDFOR
 
-  return averageWindSpeed
-end function
+  RETURN averageWindSpeed
+ENDFUNCTION
 ```
 
 ## 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
@@ -275,37 +353,37 @@ Output: Array (size 12) of Integers totalSolarRadiation (sorted descending order
 
 Pseudo Code:
 ```
-function getTotalSolarRadiation(year):
-  totalSolarRadiation = []
+FUNCTION getTotalSolarRadiation(year):
+  SET totalSolarRadiation = []
 
-  for month in JAN FEB MAR APR JUN JUL AUG SEP OCT NOV DEC:
-    monthTotal = 0
+  FOR month IN (JAN FEB MAR APR JUN JUL AUG SEP OCT NOV DEC):
+    SET monthTotal = 0
 
-    for index 1 to 31:
-      day = READINGS[year][month][index]
+    FOR index 1 TO 31:
+      SET day = READINGS[year][month][index]
 
-      if day not NULL:
-        monthTotal = monthTotal + day[SR].getTotal()     // getTotal() is a method in DailyReadings class
-      end if
-    end for
+      IF day NOT NULL:
+        SET monthTotal = monthTotal + day[SR].getTotal()     // getTotal() is a method in DailyReadings class
+      ENDIF
+    ENDFOR
 
     // Insert monthTotal into correct position in the array
 
-    for index 0 to 11:
-      if totalSolarRadiation[index] is NULL:
-        totalSolarRadiation[index] = monthTotal
-        break for loop
-      else if monthTotal > totalSolarRadiation[index]:
-        push elements from index upto end one step to the right
-        totalSolarRadiation[index] = monthTotal
-        break for loop
-      end if
-    end for
+    FOR index 0 TO 11:
+      IF totalSolarRadiation[index] IS NULL:
+        SET totalSolarRadiation[index] = monthTotal
+        BREAKFOR
+      ELSEIF monthTotal > totalSolarRadiation[index]:
+        PUSH ELEMENTS FROM INDEX UPTO END ONE STEP TO THE RIGHT
+        SET totalSolarRadiation[index] = monthTotal
+        BREAKFOR
+      ENDIF
+    ENDFOR
 
-  end for
+  ENDFOR
 
-  return totalSolarRadiation
-end function
+  RETURN totalSolarRadiation
+ENDFUNCTION
 ```
 
 ## 5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
@@ -314,16 +392,16 @@ Output: String representation of time as HH:MM in 24 hour format
 
 Pseudo Code:  
 ```
-function getHighestSolarRadiationTimes(year, month, day):
+FUNCTION getHighestSolarRadiationTimes(year, month, day):
 
-  srDailyReadingsInstance = READINGS[year][month][day][SR]
-  maxReadingsIndices = srDailyReadingsInstance.getMaxIndices()     // getMaxIndices() is a method in DailyReadings class
+  SET srDailyReadingsInstance = READINGS[year][month][day][SR]
+  SET maxReadingsIndices = srDailyReadingsInstance.getMaxIndices()     // getMaxIndices() is a method in DailyReadings class
 
-  for index in maxReadingsIndices.length to 0:   // getMaxIndices() method returns the array of indexes sorted in chronological order by default.
-    print srDailyReadingsInstance.getTimeFromIndex(maxReadingsIndices[index])   // getTimeFromIndex() is a method in DailyReadings class
-  end for
+  FOR index IN (length of maxReadingsIndices) TO 0:   // getMaxIndices() method returns the array of indexes sorted in chronological order by default.
+    PRINT srDailyReadingsInstance.getTimeFromIndex(maxReadingsIndices[index])   // getTimeFromIndex() is a method in DailyReadings class
+  ENDFOR
   
-end function
+ENDFUNCTION
 ```
 # Conclusion
 
