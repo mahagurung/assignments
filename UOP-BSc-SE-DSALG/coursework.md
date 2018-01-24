@@ -10,7 +10,7 @@ For example to get the object of class data structure for Wind Speeds on 2nd Feb
 READINGS[2014][FEB][2][S] -> Object of DailyReadings  
 
 The below diagram shows a visualization of the above call with all the data structures included.
-![Example data structure layout](./data_structure_layout.png)
+![Example data structure layout](./data_structure_layout.svg)
 
 **Implementation details of the hashmaps and other data structures are explained below.**
 ## Year Hashmap
