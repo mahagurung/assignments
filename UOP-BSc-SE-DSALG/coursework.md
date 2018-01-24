@@ -7,7 +7,7 @@ Since the keys of the input data (Year, Month, Day, Sensor Type) are pre-known a
 For example to get the object of class data structure for Wind Speeds on 2nd February 2014:  
 READINGS[2014][FEB][2][S] -> Object of DailyReadings  
 
-![alt text] (data_structure_layout.png)
+![alt text] (https://github.com/vissree/assignments/raw/master/UOP-BSc-SE-DSALG/data_structure_layout.png)
 
 Details of various hashmaps implementation are explained below.
 ## Year
@@ -19,6 +19,7 @@ h(k) = k mod m
 where k = year and m = 10.  
 Ex: h(2016) = 2016 mod 10 = 6  
 
+###### Hashmap
 | Key | Index |
 |-----|:-----:|
 |2007 |7
@@ -54,6 +55,7 @@ h(NOV) = 11
 h(DEC) = 12  
 ```
 
+###### Hashmap
 | Key | Index |
 |-----|:-----:|
 |JAN |1
@@ -104,6 +106,7 @@ h(Dts) = 15
 h(Sx) = 16  
 ```
 
+###### Hashmap
 | Key | Index |
 |-----|:-----:|
 |QFE |0
