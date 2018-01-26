@@ -331,7 +331,7 @@ ENDFUNCTION
 ```
 ## 3. Average wind speed for each month of a specified year in the order of month
 Input: Integer year  
-Output: Array of Integers averageWindSpeed (sorted in the order of month)  
+Output: Array of Integers averageWindSpeed  
 Complexity: Constant, O(1)  
 
 Pseudo Code:
@@ -364,8 +364,8 @@ ENDFUNCTION
 
 ## 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
 Input: Integer year  
-Output: Array (size 12) of Integers totalSolarRadiation (sorted descending order)  
-Complexity: Linear, O(n).
+Output: Array of Integers totalSolarRadiation  
+Complexity: Linear, O(n).  
 
 Pseudo Code:
 ```
@@ -427,7 +427,17 @@ FUNCTION getHighestSolarRadiationTimes(year, month, day):
 ENDFUNCTION
 ```
 # Conclusion
-
+Most of the client requirements can be done in constant time complexity because of the way *inserts* are handled and using hashmaps. The insert operation has a linear complexity O(n), where n is the number of readings. The operations like finding max, sum and average which themselves has a linear complexity are done along with the insert. Moreover, the readings are saved as a sorted array. This way, these operations are completely removed from the other algorithms which are called more frequently compared to insert. *Insert is a one time operation, how ever finding the total solar radiation for a month can be repeated multiple times*. By segragating the data across various hashmaps lookups are also done in constant time rather than looping through the entire data.
 ## Space and time requirement
- The algorithm loops through the number of days and the complexity is linear, O(n). However, the number of days (n) is always between (0..31) and can be considered constant, O(1)
-Combining all the readings to one array has a linear complexity, O(n). However this is significantly smaller compared to the complexity of the sorting, even though the quicksort complexity of O(n log(n)), n in this case can go upto 105,120 (total readings per sensor per year).
+#####1. The maximum wind speed of a specified month and year.
+Though the algorithm loops through the daysArray the relative time complexity can be considered constant as n here is always between 28 and 31. Space complexity is also constant as we compare the daily max value with overall maximum and the same variables are re-used across the loop iterations.
+#####2. The median wind speed of a specified year.
+To find the median all the values needs to be sorted and saved in one single array. Combining all the readings to one array has a linear complexity O(n) where n is the number of individual arrays. However this is significantly smaller compared to the complexity of the sorting. Even though the quicksort complexity is O(n log(n)), n in this case can go upto 105,120 - the total readings per sensor per year. Hence the overal time complexity is O(n log(n)). This algorithm has a linear space complexity which depends on the number of readings.
+#####3. Average wind speed for each month of a specified year in the order of month
+The monthHashmap is visited in the order of the months and monthly averages are pushed into the output array in the same order. Hence the output array has been sorted in the required sequence. Since the DailyReadings class object has the average of readings as a data member, getting it has a contant complexity too. The space requirement is linear depending on the number of months with available readings.
+#####4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
+Getting the total values can be done in constant complexity, however the results are sorted in place using insertion sort. Hence the algorithm has a time complexity of O(n) and space complexity of O(n).
+#####5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
+The algorithm loops through the maxIndices array, which is a data member of DailyReadings class. The iterations depends on the number of duplicate values and has a linear complexity, O(n). The maxIndices array is retrieved and stored before processing and the space complexity is also linear.
+# References
+*M. Goodrich, R. Tamassia & M. Goldwasser, 2014, Data Structures & Algorithms in Java (6th Edition)*
