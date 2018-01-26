@@ -1,4 +1,5 @@
-# Analysis of the problem
+# Data Structures and Algorithms - Coursework
+## Analysis of the problem
 The goal of the exercise is to store 10 years worth of 5 min interval sensor readings in such a way that lookups can be done efficiently. One main charactersitic of the data that is to be processed is that the storage requirements are constant. ie it is given that the data is for 10 years and every year has 12 months. The number of days in every month is constant (though it changes across months) and so is the total number of readings per sensor per day (One reading per 5 mins - 288 readings per sensor per day). 
 
 A common requirement in the problem set is the ability to get the value, given a sensor type and date (year, month and/or day). One of the questions also asks for the exact time stamp of the reading. 
@@ -6,7 +7,7 @@ A common requirement in the problem set is the ability to get the value, given a
 Values like maximum, average and total can be calculated along with inserts to avoid redundant linear parsing of sensor readings, hence the proposed data structure should support this. The fact that the given data set may contain duplicates has to be considered while searching or sorting the readings and have to choose search and sort algorithms that can handle duplicates.  
 
 Each input file has an year worth of data in chronoligcal order. It is assumed that that files are going to be processed line by line, while inserting various readings to it's proposed data structure.
-# Proposed Data Structures
+## Proposed Data Structures
 Since the keys of the input data (Year, Month, Day, Sensor Type) are pre-known and definite, one of the best options to store them is hashmaps. Hashmaps lets us do the lookups with constant time complexity, ie O(1).  
 
 For example to get the object of class data structure for Wind Speeds on 2nd February 2014 a single lookup over the hashmaps fetches the required daily reading data structure.  
@@ -17,7 +18,7 @@ The below diagram shows a visualization of the above call with all the data stru
 ![Example data structure layout](./data_structure_layout.svg)
 
 **Implementation details of the hashmaps and other data structures are explained below.**
-## Year Hashmap
+### Year Hashmap
 Data for a year is stored in the *yearHashmap*. Since the data set is smaller (10 entries), a simple modular hashing function with a linear collision resolution can be used on an array of 10 elements.
 ```
 h(k) = k mod m
@@ -41,7 +42,7 @@ where k = year and m = 10.
 ```
 yearHashmap[2014] -> monthHashmap[]
 ```
-## Month Hashmap
+### Month Hashmap
 The *monthHashmap* uses a custom hashing function which accepts the 3 letter string representation of month name and output the numeric value of the month. The output of this hashing function is always unique, hence there is no need for a collision resolution function. The size of the array used by this hashmap is 13 and index 0 is pointed to NULL. So that the actual values begins from 1 and goes upto 12.
 ```
 h(JAN) = 1
@@ -77,7 +78,7 @@ h(DEC) = 12
 ```
 monthHashmap[FEB] -> daysArray[]
 ```
-## Days Array
+### Days Array
 The *daysArray* is an array of *sensorHashmap* values. Use of hashmap here will be redundant and the day number can be used as the index of the array without passing it through a hashing function. The size of the array is 32, indexed (0..31), with all values initialized to NULL.
 ```
 daysArray = [NULL, NULL,...., NULL]
@@ -92,7 +93,7 @@ FOR index IN 1 TO 31:
 ENDFOR
 ```
 **Element of daysArray is a sensorHashmap.**
-## Sensor Hashmap
+### Sensor Hashmap
 The *sensorHashmap* uses a custom hashing function as well. It takes the sensor type as an input and returns the index.
 ```
 h(QFE) = 0
@@ -135,7 +136,7 @@ h(Sx) = 16
 |Sx  |16
 
 **Element of a sensorHashmap is an object of DailyReadings class**
-## Daily Readings
+### Daily Readings
 The goal in the design of data set for daily readings is to do the following actions efficiently:  
 1) Insert new item  
 2) Find the max value(s) including duplicates along with the timestamp  
@@ -262,9 +263,9 @@ CLASS DailyReadings():
 
 ENDCLASS
 ```
-# Algorithms
+## Algorithms
 *Complexities are discussed in detail in the conclusion*
-## 1. The maximum wind speed of a specified month and year.
+### 1. The maximum wind speed of a specified month and year.
 Input: Integer year, String month  
 Output: Integer windSpeed  
 Complexity: Constant, O(1)  
@@ -289,7 +290,7 @@ FUNCTION getMaxWindSpeed(year, month):
 
 ENDFUNCTION
 ```
-## 2. The median wind speed of a specified year.
+### 2. The median wind speed of a specified year.
 Input: Integer year  
 Output: Float median  
 Complexity: O(n log(n)), where n is the total number of readings per year.  
@@ -329,7 +330,7 @@ FUNCTION getMedianWindSpeed(year):
 
 ENDFUNCTION
 ```
-## 3. Average wind speed for each month of a specified year in the order of month
+### 3. Average wind speed for each month of a specified year in the order of month
 Input: Integer year  
 Output: Array of Integers averageWindSpeed  
 Complexity: Constant, O(1)  
@@ -362,7 +363,7 @@ FUNCTION getAverageWindSpeed(year):
 ENDFUNCTION
 ```
 
-## 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
+### 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
 Input: Integer year  
 Output: Array of Integers totalSolarRadiation  
 Complexity: Linear, O(n).  
@@ -401,7 +402,7 @@ FUNCTION getTotalSolarRadiation(year):
   RETURN totalSolarRadiation
 ENDFUNCTION
 ```
-## 5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
+### 5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
 Input: Integer Year, String Month, Integer Day
 Output: String representation of time as HH:MM in 24 hour format
 Complexity: Linear, O(n) - where n is the number of duplicates.  
@@ -426,18 +427,19 @@ FUNCTION getHighestSolarRadiationTimes(year, month, day):
 
 ENDFUNCTION
 ```
-# Conclusion
+## Conclusion
 Most of the client requirements can be done in constant time complexity because of the way *inserts* are handled and using hashmaps. The insert operation has a linear complexity O(n), where n is the number of readings. The operations like finding max, sum and average which themselves has a linear complexity are done along with the insert. Moreover, the readings are saved as a sorted array. This way, these operations are completely removed from the other algorithms which are called more frequently compared to insert. *Insert is a one time operation, how ever finding the total solar radiation for a month can be repeated multiple times*. By segragating the data across various hashmaps lookups are also done in constant time rather than looping through the entire data.
-## Space and time requirement
-#####1. The maximum wind speed of a specified month and year.
+### Space and time requirement
+##### 1. The maximum wind speed of a specified month and year.
 Though the algorithm loops through the daysArray the relative time complexity can be considered constant as n here is always between 28 and 31. Space complexity is also constant as we compare the daily max value with overall maximum and the same variables are re-used across the loop iterations.
-#####2. The median wind speed of a specified year.
+##### 2. The median wind speed of a specified year.
 To find the median all the values needs to be sorted and saved in one single array. Combining all the readings to one array has a linear complexity O(n) where n is the number of individual arrays. However this is significantly smaller compared to the complexity of the sorting. Even though the quicksort complexity is O(n log(n)), n in this case can go upto 105,120 - the total readings per sensor per year. Hence the overal time complexity is O(n log(n)). This algorithm has a linear space complexity which depends on the number of readings.
-#####3. Average wind speed for each month of a specified year in the order of month
+##### 3. Average wind speed for each month of a specified year in the order of month
 The monthHashmap is visited in the order of the months and monthly averages are pushed into the output array in the same order. Hence the output array has been sorted in the required sequence. Since the DailyReadings class object has the average of readings as a data member, getting it has a contant complexity too. The space requirement is linear depending on the number of months with available readings.
-#####4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
+##### 4. Total solar radiation for each month of a specified year in a descending order of the solar radiation.
 Getting the total values can be done in constant complexity, however the results are sorted in place using insertion sort. Hence the algorithm has a time complexity of O(n) and space complexity of O(n).
-#####5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
+##### 5. Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order.
 The algorithm loops through the maxIndices array, which is a data member of DailyReadings class. The iterations depends on the number of duplicate values and has a linear complexity, O(n). The maxIndices array is retrieved and stored before processing and the space complexity is also linear.
-# References
-*M. Goodrich, R. Tamassia & M. Goldwasser, 2014, Data Structures & Algorithms in Java (6th Edition)*
+## References
+*M. Goodrich, R. Tamassia & M. Goldwasser, 2014, Data Structures & Algorithms in Java (6th Edition)*.  
+*JD, Pseudocode Standard (12/2/03) < <http://users.csc.calpoly.edu/~jdalbey/SWE/pdl_std.html> > accessed 6 January 2018*.
