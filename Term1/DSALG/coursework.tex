@@ -1,0 +1,539 @@
+\documentclass[12pt]{article}
+\usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
+\geometry{a4paper} % or letter or a5paper or ... etc
+% \geometry{landscape} % rotated page geometry
+
+% See the ``Article customise'' template for come common customisations
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage[style=british]{csquotes}
+\usepackage{biblatex}
+\addbibresource{coursework.bib}
+\DefineBibliographyStrings{english}{bibliography = {References}}
+
+\newcounter{nalg}[section] % defines algorithm counter for section
+\renewcommand{\thenalg}{\thesection.\arabic{nalg}} %defines appearance of the algorithm counter
+\DeclareCaptionLabelFormat{algocaption}{Algorithm \thenalg} % defines a new caption label as Algorithm x.y
+
+\lstnewenvironment{algorithm}[1][]{%defines the algorithm listing environment
+	\refstepcounter{nalg} %increments algorithm number
+	\captionsetup{labelformat=algocaption,labelsep=colon} %defines the caption setup for: it ises label format as the declared caption label above and makes label and caption text to be separated by a ':'
+	\lstset{%this is the stype
+		mathescape=true,
+		frame=tB,
+		numbers=left, 
+		numberstyle=\tiny,
+		basicstyle=\scriptsize, 
+		keywordstyle=\color{black}\bfseries\em,
+		keywords={IS, IF, ELSE, ENDIF, SET, FOR, ENDFOR, IN, NOT, NULL, FUNCTION, ENDFUNCTION, CLASS, ENDCLASS} %add the keywords
+		numbers=left,
+		xleftmargin=.04\textwidth,
+		#1 % this is to add specific settings to a usage of this environment (for instnce, the caption and referable label)
+	}
+}
+{}
+
+%%% BEGIN DOCUMENT
+\begin{document}
+\title{Data Structure And Algorithms - Coursework}
+\author{Vishnu Sreekumar}
+\date{January 2018} % delete this line to display the current date
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Analysis of the problem}
+\paragraph The goal of the exercise is to store 10 years worth of 5 minute interval sensor readings in such a way that lookups can be done efficiently. One main characteristic of the data that is to be processed is that the storage requirements are constant. ie it is given that the data is for 10 years and every year has 12 months. The number of days in every month is constant (though it changes across months) and so is the total number of readings per sensor per day (One reading per 5 minutes - 288 readings per sensor per day).
+\paragraph{}A common requirement in the problem set is the ability to get the value, given a sensor type and date (year, month and/or day). One of the questions also asks for the exact time stamp of the reading. 
+\paragraph{}Values like maximum, average and total can be calculated along with inserts to avoid redundant linear parsing of sensor readings, hence the proposed data structure should support this. The fact that the given data set may contain duplicates has to be considered while searching or sorting the readings and have to choose search and sort algorithms that can handle duplicates.
+\paragraph{}Each input file has an year worth of data in chronological order. It is assumed that that files are going to be processed line by line, while inserting various readings to it's proposed data structure.
+
+\section{Proposed Data Structures}
+\paragraph{}Since the keys of the input data (Year, Month, Day, Sensor Type) are pre-known and definite, one of the best options to store them is a {\em Map Abstract Data Type}. A map ADT lets us do the lookups with constant time complexity, ie O(1). \cite{TEXTBOOK}
+\paragraph{}For example to get the object of class data structure for Wind Speeds on 2nd February 2014 a single lookup over the map ADT fetches the required daily reading data structure.
+\subparagraph{}
+\begin{lstlisting}
+READINGS\[2014\]\[FEB\]\[2\]\[S\] -> Object of DailyReadings
+\end{lstlisting}  
+\paragraph{}The below diagram shows a visualization of the above call with all the data structures included.
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{./data_structure_layout.jpg}
+	\caption{Wind Speeds on 2nd February 2014}
+	\label{example_datastructure_layout}
+\end{figure}
+Individual data structures in the above diagram are discussed in detail below.
+\subsection{Year Map ADT}
+Data for a year is stored in the {\em yearHashmap}. Since the data set is smaller (10 entries), a simple modular hashing function with a linear collision resolution can be used on an array of 10 elements.
+\begin{lstlisting}
+h(k) = k mod m
+\end{lstlisting}
+where k = year and m = 10.
+\subsubsection{Lookup table}
+\begin{tabular}{| c | c |}
+	\hline
+	Key & Index \\
+	\hline
+	2007 & 7 \\
+	\hline
+	2008  & 8 \\
+	\hline
+	2009 & 9 \\
+	\hline
+	2010 & 0 \\
+	\hline
+	2011 & 1 \\
+	\hline
+	2012 & 2 \\
+	\hline
+	2013 & 3 \\
+	\hline
+	2014 & 4 \\
+	\hline
+	2015 & 5 \\
+	\hline
+	2016 & 6 \\
+	\hline
+\end{tabular}
+\\ \\ \\
+{\em Element of yearHashmap is an object of monthHashmap.}
+\begin{lstlisting}
+yearHashmap[2014] -> monthHashmap[]
+\end{lstlisting}
+
+\subsection{Month Map ADT}
+The {\em monthHashmap} uses a custom hashing function which accepts the 3 letter string representation of month name and output the numeric value of the month. The output of this hashing function is always unique, hence there is no need for a collision resolution function. The size of the array used by this hashmap is 13 and index 0 is pointed to NULL. So that the actual values begins from 1 and goes up-to 12.
+\begin{lstlisting}
+h(JAN) = 1
+h(FEB) = 2
+h(MAR) = 3
+h(APR) = 4
+h(MAY) = 5
+h(JUN) = 6
+h(JUL) = 7
+h(AUG) = 8
+h(SEP) = 9
+h(OCT) = 10
+h(NOV) = 11
+h(DEC) = 12
+\end{lstlisting}
+\subsubsection{Lookup Table}
+\begin{tabular}{| c | c |}
+	\hline
+	Key & Index \\
+	\hline
+	JAN & 1 \\
+	\hline
+	FEB & 2 \\
+	\hline
+	MAR & 3 \\
+	\hline
+	APR & 4 \\
+	\hline
+	MAY & 5 \\
+	\hline
+	JUN & 6 \\
+	\hline
+	JUL & 7 \\
+	\hline
+	AUG & 8 \\
+	\hline
+	SEP & 9 \\
+	\hline
+	OCT & 10 \\
+	\hline
+	NOV & 11 \\
+	\hline
+	DEC & 12 \\
+	\hline
+\end{tabular}
+\\ \\ \\
+{\em Element of monthHashmap is a daysArray.}
+\begin{lstlisting}
+monthHashmap[FEB] -> daysArray[]
+\end{lstlisting}
+
+\subsection{Days Array}
+The {\em daysArray} is an array of {\em sensorHashmap} values. Use of a map ADT here will be redundant and the day number can be used as the index of the array without passing it through a hashing function. The size of the array is 32, indexed (0..31), with all values initialized to NULL.
+\begin{lstlisting}
+daysArray = [NULL, NULL,\ldots, NULL]
+\end{lstlisting}
+Initializing the array elements to NULL helps in handling the varying number of days across months. For example if the daysArray[31] is pointing to NULL, it can be safely assumed that the month has only 30 days. However while looping through the daysArray, we need to keep a separate counter variable to get the actual number of days at the end.
+\begin{algorithm}[caption={Count number of days in a given daysArray.}, label={subalgo1}]
+SET counter = 0
+FOR index IN 1 TO 31:
+IF daysArray[index] NOT NULL:
+SET counter = counter + 1
+ENDIF
+ENDFOR	
+\end{algorithm}
+{\em Element of daysArray is a sensorHashmap.}
+\subsection{Sensor Map ADT}
+The {\em sensorHashmap} uses a custom hashing function as well. It takes the sensor type as an input and returns the index.
+\begin{lstlisting}
+h(QFE) = 0
+h(QFF) = 1
+h(QNH) = 2
+h(DP) = 3
+h(EV) = 4
+h(RF) = 5
+h(RH) = 6
+h(ST1) = 7
+h(ST2) = 8
+h(ST3) = 9
+h(ST4) = 10
+h(SR) = 11
+h(T) = 12
+h(S) = 13
+h(Dta) = 14
+h(Dts) = 15
+h(Sx) = 16
+\end{lstlisting}
+\subsubsection{Lookup Table}
+\begin{tabular}{| c | c |}
+	\hline
+	Key & Value \\
+	\hline
+	QFE & 0 \\
+	\hline
+	QFF & 1 \\
+	\hline
+	QNH & 2 \\
+	\hline
+	DP & 3 \\
+	\hline
+	EV & 4 \\
+	\hline
+	RF & 5 \\
+	\hline
+	RH & 6 \\
+	\hline
+	ST1 & 7 \\
+	\hline
+	ST2 & 8 \\
+	\hline
+	ST3 & 9 \\
+	\hline
+	ST4 & 10 \\
+	\hline
+	SR  & 11 \\
+	\hline
+	T & 12 \\
+	\hline
+	S & 13 \\
+	\hline
+	Dta & 14 \\
+	\hline
+	Dts & 15 \\
+	\hline
+	Sx & 16 \\
+	\hline
+\end{tabular}
+\\ \\ \\
+{\em Element of a sensorHashmap is an object of DailyReadings ADT.}
+\subsection{Daily Readings}
+The goal in the design of data set for daily readings is to do the following actions efficiently:  
+\begin{enumerate}
+	\item Insert new item
+	\item Find the max value(s) including duplicates along with the timestamp
+	\item Find average value
+	\item Find total
+\end{enumerate}
+\paragraph{}We need to use a custom Abstract Data Type \cite{TEXTBOOK} with sensor readings, max, average and total values as data members and methods to achieve the above requirements.
+\paragraph{}Daily sensor readings are inserted to an array data field in this abstract data structure. Max value(s), average and total can be calculated or updated along with insert operation. Average and total are also stored as data fields. However we need some special considerations for storing the Max values.
+\paragraph{}It is a requirement that we not only need the maximum values but also the time associated with the values. We know that readings are taken every 5 minutes and that makes total 288 readings per day. If we get the values sorted by time and store these values in an array of size 289 (ie index 0 - 288) starting from index 1, the nth item will be the reading at (n * 5)th minute.
+\paragraph{}In 24 hr format we usually represent time as 00:00 to 23:59. That is the 288th reading in our case should actually be the first reading of the next day. The below algorithm can be tweaked to make it more realistic and support this edge case. However, for the sake of simplicity, we are assuming that the first reading of the day is taken at 00:05 and the last reading at 24:00. Given an index n, we can find the time as below.\\ \\
+\begin{math}
+totalMinutes = n * 5 \\
+hours = | totalMinutes / 60 | \\
+minutes = | totalMinutes\ mod\ 60 | \\
+\end{math}
+\\
+For example:\\
+readings[15] is the reading at 75th minute or in other words, the time will be 01:15 (24 hr format). The calculation can be reversed to find the reading for a specific time as follows.\\ \\
+\begin{math}
+totalMinutes = (hours * 60) + minutes\\
+n = totalMinutes / 5\\
+value = readings[n]\\
+\end{math}
+\\
+Since we can easily find the value and time from the index of the item in the sensor readings array, the Max values can be represented as an array of their indices in the sensor readings array.\\
+\paragraph{}An abstract data structure with the following blue print can be used to store the daily readings.
+\subsubsection{Data fields}
+\begin{enumerate}
+	\item[--] Array of values
+	\item[--] Array of indices of max values
+	\item[--] Average
+	\item[--] Total
+\end{enumerate}
+\subsubsection{Methods}
+\begin{enumerate}
+	\item[--] Insert new reading
+	\item[--] Return array of readings
+	\item[--] Return max values array
+	\item[--] Return max value
+	\item[--] Return total
+	\item[--] Return average
+	\item[--] Return time given an index
+	\item[--] Return index given a time
+\end{enumerate}
+\subsubsection{Pseudo Code}
+\begin{algorithm}[caption={Blueprint of dailyReadings ADT}, label=subalgo2]
+	CLASS DailyReadings():
+	SET maxIndices = []  
+	SET average = 0.0
+	SET total = 0.0
+	SET readings = []
+	
+	FUNCTION insertRecord(value):
+	PUSH value TO readings[]
+	SET lastIndex = (length of readings[]) - 1
+	
+	IF (length of maxIndices[]) > 0:
+	// Get the value at current max index
+	SET currentMax = readings[maxIndices[0]]
+	
+	IF readings[lastIndex] > currentMax:
+	// Re-initialize the maxIndices array with lastIndex as the only member
+	SET maxIndices = [lastIndex]
+	ELSEIF readings[lastIndex] == currentMax:
+	// Push lastIndex to maxIndices array if value is equal to the max value (duplicate)
+	PUSH lastIndex TO maxIndices[]
+	ENDIF
+	
+	ELSE:
+	// If max indices array is empty add this one.
+	PUSH lastIndex TO maxIndices
+	ENDIF
+	
+	SET total = total + value
+	SET average = total / (length of readings[])
+	ENDFUNCTION
+	
+	FUNCTION getTimeFromIndex(index):
+	//Assuming that time is the string representation of HH:MM in 24 hours format
+	
+	SET totalMinutes = index * 5
+	SET hour = INTEGER(totalMinutes / 60)
+	SET minutes = INTEGER(totalMinutes % 60)
+	
+	RETURN hour + ":" + minutes
+	ENDFUNCTION
+	
+	FUNCTION getIndexFromTime(hours, minutes):
+	SET totalMinutes = (hours * 60) + minutes
+	SET index = totalMinutes / 5
+	RETURN index
+	ENDFUNCTION
+	
+	FUNCTION getMaxIndices():
+	RETURN maxIndices
+	ENDFUNCTION
+	
+	FUNCTION getMax():
+	//Return the numeric max value (no duplicates)
+	IF (length of maxIndices) > 0:
+	RETURN readings[maxIndices[0]]
+	ELSE:
+	RETURN NULL
+	ENDIF
+	
+	FUNCTION getAverage():
+	RETURN average
+	ENDFUNCTION
+	
+	FUNCTION getTotal():
+	RETURN total
+	ENDFUNCTION
+	
+	FUNCTION getValueAtIndex(index):
+	RETURN readings[index]
+	ENDFUNCTION
+	
+	FUNCTION getValueAtTime(hours, minutes):
+	SET index = getIndexFromTime(hours, minutes)
+	RETURN getValueAtIndex(index)
+	ENDFUNCTION
+	
+	FUNCTION getReadings():
+	RETURN readings[]
+	ENDFUNCTION
+	
+	ENDCLASS
+\end{algorithm}
+\section{Algorithms}
+The pseudo code \cite{PSEUDOCODE} in this section calls the methods in the {\em dailyReadings ADT}. This is highlighted using comments. 
+\subsection{The maximum wind speed of a specified month and year}
+\textbf{Input}: Integer year, String month \\  
+\textbf{Output}: Integer windSpeed \\
+\textbf{Complexity}: Constant, O(1)
+\subsubsection{Pseudo Code}
+\begin{algorithm}[caption={Find maximum wind speed in a given month and year}, label=algo1]
+FUNCTION getMaxWindSpeed(year, month):
+SET max = 0
+
+FOR index IN 1 TO 31:
+SET day = READINGS[year][month][index]
+
+IF day NOT NULL:
+SET dayMax = day[S].getMax()
+IF dayMax > max:
+SET max = dayMax
+ENDIF
+ENDIF
+ENDFOR
+
+RETURN max
+
+ENDFUNCTION
+\end{algorithm}
+\subsection{The median wind speed of a specified year}
+\textbf{Input}: Integer year \\
+\textbf{Output}: Float median \\
+\textbf{Complexity}: O(n log(n)), where n is the total number of readings per year.
+\subsubsection{Pseudo Code}
+\begin{algorithm}[caption={Find median wind speed in a given year}, label=algo2]
+	FUNCTION getMedianWindSpeed(year):
+	SET windSpeedArray = []
+	
+	FOR m IN 1 TO 12:
+	SET month = READINGS[year][m]
+	
+	FOR d IN 1 TO 31:
+	SET day = month[d]
+	
+	IF day NOT NULL:
+	// getAllReadings() returns the array of daily readings
+	JOIN windSpeedArray AND day[S].getAllReadings()
+	ENDIF
+	
+	ENDFOR
+	
+	ENDFOR
+	
+	// Sort the windSpeedArray using QuickSort
+	SET sortedWindSpeedArray = QuickSort(windSpeedArray)
+	
+	IF length of sortedWindSpeedArray is odd:
+	SET pivot = (length of sortedWindSpeedArray - 1)/2
+	SET median = sortedWindSpeedArray[pivot]
+	ELSE:
+	SET pivot = (length of sortedWindSpeedArray)/2
+	SET median = (sortedWindSpeedArray[pivot - 1] + sortedWindSpeedArray[pivot]) / 2
+	ENDIF
+	
+	RETURN median
+	
+	ENDFUNCTION
+\end{algorithm}
+\subsection{Average wind speed for each month of a specified year in the order of month}
+\textbf{Input}: Integer year \\
+\textbf{Output}: Array of Integers averageWindSpeed \\
+\textbf{Complexity}: Constant, O(1)
+\subsubsection{Pseudo Code}
+\begin{algorithm}[caption={Find average wind speed per month for a given year and return values in the order of month}, label=algo3]
+	FUNCTION getAverageWindSpeed(year):
+	SET averageWindSpeed = []
+	
+	FOR month IN (JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC):
+	SET monthAverageTotal = 0
+	SET numberOfDays = 0
+	
+	FOR index 1 TO 31:
+	SET day = READINGS[year][month][index]
+	
+	IF day NOT NULL:
+	SET numberOfDays = numberOfDays + 1
+	// getAverage() returns the average value for the day
+	SET monthAverageTotal = monthAverageTotal + day[S].getAverage()
+	ENDIF
+	ENDFOR
+	
+	// average of averages == average (since weight is same; 288 readings per day)
+	SET monthAverage = monthAverageTotal / numberOfDays
+	PUSH monthAverage TO averageWindSpeed[]
+	ENDFOR
+	
+	RETURN averageWindSpeed
+	ENDFUNCTION
+\end{algorithm}
+\subsection{Total solar radiation for each month of a specified year in a descending order of the solar radiation}
+\textbf{Input}: Integer year \\
+\textbf{Output}: Array of Integers totalSolarRadiation \\
+\textbf{Complexity}: Linear, O(n).
+\subsubsection{Pseudo Code}
+\begin{algorithm}[caption={Return total solar radion of each month in a given year; in descending order.}, label=algo4]
+	FUNCTION getTotalSolarRadiation(year):
+	SET totalSolarRadiation = []
+	
+	FOR month IN (JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC):
+	SET monthTotal = 0
+	
+	FOR index IN 1 TO 31:
+	SET day = READINGS[year][month][index]
+	
+	IF day NOT NULL:
+	// getTotal() returns the sum of readings per day
+	SET monthTotal = monthTotal + day[SR].getTotal()
+	ENDIF
+	ENDFOR
+	
+	// Insert monthTotal into correct position in the array
+	FOR index IN 0 TO 11:
+	IF totalSolarRadiation[index] IS NULL:
+	SET totalSolarRadiation[index] = monthTotal
+	BREAKFOR
+	ELSEIF monthTotal > totalSolarRadiation[index]:
+	PUSH ELEMENTS FROM INDEX UPTO END ONE STEP TO THE RIGHT
+	SET totalSolarRadiation[index] = monthTotal
+	BREAKFOR
+	ENDIF
+	ENDFOR
+	
+	ENDFOR
+	
+	RETURN totalSolarRadiation
+	ENDFUNCTION
+\end{algorithm}
+\subsection{Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order}
+\textbf{Input}: Integer Year, String Month, Integer Day \\
+\textbf{Output}: String representation of time as HH:MM in 24 hour format \\
+\textbf{Complexity}: Linear, O(n) - where n is the number of duplicates. \\
+\subsubsection{Pseudo Code}
+\begin{algorithm}[caption={Show the times for the highest solar radiation for a given date, including uplicates, displayed in reverse chronological order}, label=algo5]
+	FUNCTION getHighestSolarRadiationTimes(year, month, day):
+	
+	SET srDailyReadingsInstance = READINGS[year][month][day][SR]
+	
+	// getMaxIndices() returns the array of indices of max values
+	SET maxReadingsIndices = srDailyReadingsInstance.getMaxIndices()
+	
+	// getMaxIndices() method returns the array of indexes sorted in chronological order by default
+	FOR index IN (length of maxReadingsIndices - 1) TO 0:
+	SET maxReadingIndex = maxReadingsIndices[index]
+	
+	// getTimeFromIndex() converts the index to HH:MM string representation
+	SET time = srDailyReadingsInstance.getTimeFromIndex(maxReadingIndex)
+	PRINT time
+	ENDFOR
+	
+	ENDFUNCTION
+\end{algorithm}
+\section{Conclusion}
+Most of the client requirements can be done in constant time complexity because of the way {\em inserts} are handled and using map ADT. The insert operation has a linear complexity O(n), where n is the number of readings. The operations like finding max, sum and average which themselves has a linear complexity are done along with the insert. Moreover, the readings are saved in a sorted array. This way, these operations are completely removed from the other algorithms which are called more frequently compared to insert. {\em For example, Finding the total solar radiation in a month may be called multiple times, but inserting the daily solar radiation values in only done once}. By segregating the data across various hashmaps lookups are also done in constant time rather than looping through the entire data.
+\subsection{Space and time requirement}
+\subsubsection{The maximum wind speed of a specified month and year}
+Though the algorithm loops through the daysArray the relative time complexity can be considered constant as n here is always between 28 and 31. Space complexity is also constant as we compare the daily maximum value with overall maximum and the same variables are re-used across the loop iterations.
+\subsubsection{The median wind speed of a specified year}
+To find the median all the values needs to be sorted and saved in one single array. Combining all the readings to one array has a linear complexity O(n) where n is the number of individual arrays. However this is significantly smaller compared to the complexity of the sorting. Even though the Quick Sort complexity is O(n log(n)), n in this case can go upto 105,120 - the total readings per sensor per year. Hence the overall time complexity is O(n log(n)). This algorithm has a linear space complexity which depends on the number of readings.
+\subsubsection{Average wind speed for each month of a specified year in the order of month}
+The monthHashmap is visited in the order of the months and monthly averages are pushed into the output array in the same order. Hence the output array has been sorted in the required sequence. Since the DailyReadings class object has the average of readings as a data member, getting it has a constant complexity too. The space requirement is linear depending on the number of months with available readings.
+\subsubsection{Total solar radiation for each month of a specified year in a descending order of the solar radiation}
+Getting the total values can be done in constant complexity, however the results are sorted in place using insertion sort. Hence the algorithm has a time complexity of O(n) and space complexity of O(n).
+\subsubsection{Given a date, show the times for the highest solar radiation for that date, including duplicates, displayed in reverse chronological order}
+The algorithm loops through the {\em maxIndices} array, which is a data member of {\em DailyReadings} class. The iterations depends on the number of duplicate values and has a linear complexity, O(n). The maxIndices array is retrieved and stored before processing and the space complexity is also linear. \\
+\printbibliography[title=References]
+\end{document}
