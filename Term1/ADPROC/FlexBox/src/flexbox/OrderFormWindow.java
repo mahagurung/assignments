@@ -316,7 +316,7 @@ public class OrderFormWindow extends View {
                 case "NO COLOR":
                     cp = PRINTING_OPTIONS.NO;
                     break;
-                case "ONE COlOR":
+                case "ONE COLOR":
                     cp = PRINTING_OPTIONS.ONE;
                     break;
                 case "TWO COLORS":
@@ -326,7 +326,7 @@ public class OrderFormWindow extends View {
                     cp = PRINTING_OPTIONS.NO;
                     break;
             }
-
+            
             boolean st = sealableTopYesRadioButton.isSelected();
 
             boolean rb = reBottomYesRadioButton.isSelected();
