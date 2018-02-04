@@ -1,0 +1,8 @@
+/FlexBox/nbproject/private/
+/FlexBox/build/
+/FlexBox/dist/
+**/.tex
+**.aux
+**.log
+**.synctex.gz
+**.toc
