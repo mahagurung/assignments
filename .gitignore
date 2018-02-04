@@ -6,3 +6,8 @@ __pycache__
 **.log
 **.synctex.gz
 **.toc
+**.bbl
+**.bcf
+**.blg
+**.dvi
+**.run.xml
