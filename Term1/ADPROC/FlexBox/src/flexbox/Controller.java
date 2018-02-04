@@ -78,7 +78,7 @@ public class Controller {
 
         if ((1 <= intGrade && intGrade <= 3) && cp == PRINTING_OPTIONS.NO && !rb && !rc) {
             return BOX_TYPE.ONE;
-        } else if ((1 <= intGrade && intGrade <= 4) && cp == PRINTING_OPTIONS.ONE && !rb && !rc) {
+        } else if ((2 <= intGrade && intGrade <= 4) && cp == PRINTING_OPTIONS.ONE && !rb && !rc) {
             return BOX_TYPE.TWO;
         } else if ((2 <= intGrade && intGrade <= 5) && cp == PRINTING_OPTIONS.TWO && !rb && !rc) {
             return BOX_TYPE.THREE;
