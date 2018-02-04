@@ -1,4 +1,5 @@
-/FlexBox/nbproject/private/
+/FlexBox/nbproject/**
+/FlexBox/nbproject/*
 /FlexBox/build/
 /FlexBox/dist/
 **/.tex
