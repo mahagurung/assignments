@@ -1,2 +1,8 @@
 # Packages
 __pycache__
+# Latex
+**/.tex
+**.aux
+**.log
+**.synctex.gz
+**.toc
