@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Update Leave</title>
+
+    <!-- Custom styles for this template -->
+    <link href="./css/main.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="header_b"><header><div class="logo">XYZ Company Leave Inform Portal</div></header></div>
+    <div class="menu_b sidebar">
+        <ul>
+            <li><a href="./employee_inform.html">Inform</a></li>
+            <div class="selected"><li><a href="#">Update</a></li></div>
+            <li><a href="./employee_my_info.html">My Info</a></li>
+            <li><a href="./employee_clinics.html">Clinics</a></li>
+            <li><a href="./login.html">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main_b">
+        <div class="page-title"><h4>Update Leave<hr></h4></div>
+
+        <form class="generic-form" action="#">
+            <div class="login-form">
+                <label for="remarks">Remarks</label>
+                <textarea name="Remarks" id="remarks"
+                          rows="5" cols="50" maxlength="200"
+                          wrap="hard"
+                          required autofocus></textarea>
+            </div>
+            <p></p>
+            <div class="login-form">
+                <label for="f_date">From</label>
+                <input type="date" name="From" id="f_date" required>
+            </div>
+            <div class="login-form">
+                <label for="t_date">To</label>
+                <input type="date" name="To" id="t_date" required>
+            </div>
+            <div class="login-form">
+                <label for="mc">MC</label>
+                <input type="file" name="MC" id="mc" required>
+            </div>
+            <div class="login-form">
+                <label for="clinics">Clinic</label>
+                <select name="Clinic" id="clinics">
+                    <option value="1">ABC Family Clinic</option>
+                    <option value="2">HHC Family Clinic</option>
+                    <option value="3">UHF Family Clinic</option>
+                </select>
+            </div>
+            <div class="login-form">
+                <label></label>
+                <input class="generic-button" type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+    <div class="footer_b"><footer>&copy; 2018 XYZ Company</footer></div>
+</div>
+</body>
+</html>
