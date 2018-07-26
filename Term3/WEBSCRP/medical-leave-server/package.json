@@ -2,11 +2,11 @@
   "name": "medical-leave-server",
   "version": "0.0.1",
   "description": "API server to manage the medical leaves",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./index.js --exec babel-node -e js",
-    "debug": "DEBUG=express:* nodemon ./index.js --exec babel-node -e js"
+    "test": "mocha",
+    "start": "nodemon ./server.js --exec babel-node -e js",
+    "debug": "DEBUG=express:* nodemon ./server.js --exec babel-node -e js"
   },
   "author": "up899753@myport.ac.uk",
   "license": "MIT",
@@ -18,6 +18,10 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "chai": "^4.1.2",
+    "http": "0.0.0",
+    "mocha": "^5.2.0",
+    "request": "^2.87.0"
   }
 }
