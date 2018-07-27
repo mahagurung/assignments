@@ -4,7 +4,6 @@ const config = require('../lib/config');
 
 const baseUrl = "http://localhost:" + config.port;
 const failureEmptyJson = { success: 0 };
-const successEmptyJson = { success: 1 };
 
 // Connect to database
 const db = require('../lib/database');
@@ -13,8 +12,10 @@ const db = require('../lib/database');
  * Test cases
  */
 
-describe('Get Employee details by id', function () {
-  it('Should retrieve details of employee with id 500101', function (done) {
+describe('Employee details', function() {
+  let apiEndpoint = `${baseUrl}/employee`;
+
+  it('Should retrieve details of employee with id 500101', function(done) {
     let expected = {
       success: 1,
       employee_id: 500101,
@@ -24,7 +25,7 @@ describe('Get Employee details by id', function () {
     };
 
     let options = {
-      uri: `${baseUrl}/employee/500101`,
+      uri: `${apiEndpoint}/500101`,
       json: true
     };
 
@@ -38,11 +39,11 @@ describe('Get Employee details by id', function () {
     done();
   })
 
-  it('Should return failure json for employee with id 0', function (done) {
+  it('Should return failure json for employee with id 0', function(done) {
     let options = {
-      uri: `${baseUrl}/employee/0`,
+      uri: `${apiEndpoint}/0`,
       json: true
-    }
+    };
 
     request.get(options, function(err, res, result) {
       if (err) {
@@ -53,10 +54,43 @@ describe('Get Employee details by id', function () {
     });
     done();
   });
+
+  it('Should return role of employee id 500101 as supervisor', function(done) {
+    let options = {
+      uri: `${apiEndpoint}/role/500101`,
+      json: true
+    };
+
+    request.get(options, function(err, res, result) {
+      if (err) {
+        done(err);
+      } else {
+        expect(result.role).to.equal('supervisor');
+      }
+    });
+    done();
+  });
+
+  it('Should return role of employee id 500108 as employee', function(done) {
+    let options = {
+      uri: `${apiEndpoint}/role/500109`,
+      json: true
+    };
+
+    request.get(options, function(err, res, result) {
+      if (err) {
+        done(err);
+      } else {
+        expect(result.role).to.equal('employee');
+      }
+    });
+    done();
+  });
 });
 
 
-describe('Manage Leave requests', function () {
+describe('Leave requests', function () {
+  let apiEndpoint = `${baseUrl}/medicalleave`;
 
   // Variable to retain the new leave request's id
   let rowId;
@@ -74,7 +108,7 @@ describe('Manage Leave requests', function () {
     };
 
     let options = {
-      uri: `${baseUrl}/medicalleave/inform`,
+      uri: `${apiEndpoint}/inform`,
       headers: headers,
       body: reqJson,
       json: true
@@ -101,7 +135,7 @@ describe('Manage Leave requests', function () {
 
   it('Get leave request by id', function (done) {
     let options = {
-      uri: `${baseUrl}/medicalleave/${rowId}`,
+      uri: `${apiEndpoint}/${rowId}`,
       json: true
     };
 
@@ -131,7 +165,7 @@ describe('Manage Leave requests', function () {
     };
 
     let options = {
-      uri: `${baseUrl}/medicalleave/${rowId}`,
+      uri: `${apiEndpoint}/${rowId}`,
       headers: headers,
       body: reqJson,
       json: true
