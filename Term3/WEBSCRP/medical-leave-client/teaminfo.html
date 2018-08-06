@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Inform Medical Leave</title>
+
+    <!-- Custom styles for this template -->
+    <link href="./css/main.css" rel="stylesheet">
+</head>
+
+<body><div class="page-title"><h4>Pending</h4><hr></div>
+
+<div class="divTable blueTable">
+  <div class="divTableBody">
+      <div class="divTableRow">
+          <div class="divTableCellNoBorder">1</div>
+          <div class="divTableCellNoBorder">${id}</div>
+          <div class="divTableCellNoBorder">${name}</div>
+          <div class="divTableCellNoBorder"><a href="#" onclick="populateTeamInfo(${id})">View</a></div>
+          <div class="divTableCellNoBorder"><a href="#" onclick="updateLeaveStatus(${leave_id}, 2)">Approve</a></div>
+          <div class="divTableCellNoBorder"><a href="#" onclick="updateLeaveStatus(${leave_id}, 0)">Reject</a></div>
+      </div>
+  </div>
+</div>
+</body>
+</html>

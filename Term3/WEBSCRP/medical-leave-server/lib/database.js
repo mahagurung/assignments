@@ -12,6 +12,21 @@ const conn = new sqlite3.Database(config.db_file, function(err) {
   console.log(`Connected to the database using file ${config.db_file}.`);
 });
 
+let allWithPromise = function(sql, params) {
+  helper.debug_print(`Running "${sql}" using ${params}`);
+  return new Promise(function(resolve, reject) {
+    conn.serialize(function () {
+      conn.all(sql, params, function(err, rows) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  });
+};
+
 let getWithPromise = function(sql, params) {
   helper.debug_print(`Running "${sql}" using ${params}`);
   return new Promise(function(resolve, reject) {
@@ -43,6 +58,7 @@ let runWithPromise = function(sql, params) {
 };
 
 module.exports.conn = conn;
+module.exports.allWithPromise = getWithPromise;
 module.exports.getWithPromise = getWithPromise;
 module.exports.runWithPromise = runWithPromise;
 

@@ -3,7 +3,6 @@ const request = require('request');
 const config = require('../lib/config');
 
 const baseUrl = "http://localhost:" + config.port;
-const failureEmptyJson = { success: 0 };
 
 // Connect to database
 const db = require('../lib/database');
@@ -16,43 +15,35 @@ describe('Employee details', function() {
   let apiEndpoint = `${baseUrl}/employee`;
 
   it('Should retrieve details of employee with id 500101', function(done) {
-    let expected = {
-      success: 1,
-      employee_id: 500101,
-      name: "Marketa Sorbey",
-      picture: "http://localhost:3000/images/500101.jpg",
-      designation: "CEO"
-    };
-
     let options = {
       uri: `${apiEndpoint}/500101`,
       json: true
     };
 
-    request.get(options, function(err, res, result) {
+    request.get(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        expect(expected).to.deep.equal(result);
+        expect(body.id).to.equal(500101);
+        done();
       }
     });
-    done();
   })
 
-  it('Should return failure json for employee with id 0', function(done) {
+  it('Should fail gracefully for employee with id 0', function(done) {
     let options = {
       uri: `${apiEndpoint}/0`,
       json: true
     };
 
-    request.get(options, function(err, res, result) {
+    request.get(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        expect(failureEmptyJson).to.deep.equal(result);
+        expect(body.success).to.equal(0);
+        done();
       }
     });
-    done();
   });
 
   it('Should return role of employee id 500101 as supervisor', function(done) {
@@ -61,14 +52,14 @@ describe('Employee details', function() {
       json: true
     };
 
-    request.get(options, function(err, res, result) {
+    request.get(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        expect(result.role).to.equal('supervisor');
+        expect(body.role).to.equal('supervisor');
+        done();
       }
     });
-    done();
   });
 
   it('Should return role of employee id 500108 as employee', function(done) {
@@ -77,23 +68,38 @@ describe('Employee details', function() {
       json: true
     };
 
-    request.get(options, function(err, res, result) {
+    request.get(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        expect(result.role).to.equal('employee');
+        expect(body.role).to.equal('employee');
+        done();
       }
     });
-    done();
+  });
+
+  it('Should return all tasks allocated to employee id 500109', function(done) {
+    let options = {
+      uri: `${apiEndpoint}/tasks/500109`,
+      json: true
+    };
+
+    request.get(options, function(err, res, body) {
+      if (err) {
+        done(err);
+      } else {
+        expect(body.tasks).to.be.an('array').that.is.not.empty;
+        expect(body.tasks[0].employee_id).to.equal(500109);
+        done();
+      }
+    });
   });
 });
 
 
-describe('Leave requests', function () {
+describe('Leave requests', function() {
   let apiEndpoint = `${baseUrl}/medicalleave`;
-
-  // Variable to retain the new leave request's id
-  let rowId;
+  let rowId; // Variable to retain the new leave request's id
 
   it('Create new leave request', function(done) {
     let reqJson = {
@@ -114,42 +120,42 @@ describe('Leave requests', function () {
       json: true
     };
 
-    request.post(options, function(err, res, result) {
+    request.post(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        rowId = result.leave_id;
+        rowId = body.leave_id;
 
         let sql = `SELECT id, remarks, from_date, employee_id FROM medical_leaves WHERE id = ?`;
-        db.conn.get(sql, [rowId], function (err, row) {
+        db.conn.get(sql, [rowId], function(err, row) {
           if (err) {
             done(err);
           } else {
             expect(row.remarks).to.deep.equal("Testing leave request api");
+            done();
           }
         });
       }
-      done();
     });
   });
 
-  it('Get leave request by id', function (done) {
+  it('Get leave request by id', function(done) {
     let options = {
       uri: `${apiEndpoint}/${rowId}`,
       json: true
     };
 
-    request.get(options, function(err, res, result) {
+    request.get(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        expect(result.remarks).to.deep.equal("Testing leave request api");
+        expect(body.id).to.equal(rowId);
+        done();
       }
     });
-    done();
   });
 
-  it('Update leave request by id', function (done) {
+  it('Update leave request by id', function(done) {
     let reqJson = {
       remarks: "Testing update leave request api",
       from_date: "2017-11-26 00:00:00",
@@ -164,24 +170,23 @@ describe('Leave requests', function () {
       'Content-Type': 'application/json'
     };
 
-    let options = {
-      uri: `${apiEndpoint}/${rowId}`,
+      let options = {
+        uri: `${apiEndpoint}/${rowId}`,
       headers: headers,
       body: reqJson,
       json: true
     };
 
-    request.put(options, function(err, res, result) {
+    request.put(options, function(err, res, body) {
       if (err) {
         done(err);
       } else {
-        expect(result.rows_updated).to.equal(1);
+        expect(body.rows_updated).to.equal(1);
+        done();
       }
     });
-    done();
   });
 
-  /*
   // Cleanup
   it('Cleanup test data', function(done) {
     let sql = `DELETE FROM medical_leaves where id = ?`;
@@ -189,8 +194,43 @@ describe('Leave requests', function () {
       if (err) {
         done(err);
       }
+      done();
     });
-    done();
   });
-  */
+});
+
+describe('Clinics', function() {
+  let apiEndpoint = `${baseUrl}/clinics`;
+
+  it('Should return all the clinics in the database', function(done) {
+    let options = {
+      uri: `${apiEndpoint}/all`,
+      json: true
+    };
+
+    request.get(options, function(err, res, body) {
+      if (err) {
+        done(err);
+      } else {
+        expect(body.clinics).to.be.an('array').that.is.not.empty;
+        done();
+      }
+    });
+  });
+
+  it('Should return the details of clinic with id 1', function(done) {
+    let options = {
+      url: `${apiEndpoint}/1`,
+      json: true
+    };
+
+    request.get(options, function(err, res, body) {
+      if (err) {
+        done(err);
+      } else {
+        expect(body.id).to.equal(1);
+        done();
+      }
+    });
+  });
 });

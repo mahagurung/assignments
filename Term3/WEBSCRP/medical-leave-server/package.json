@@ -6,12 +6,16 @@
   "scripts": {
     "test": "mocha",
     "start": "nodemon ./server.js --exec babel-node -e js",
-    "debug": "DEBUG=express:* nodemon ./server.js --exec babel-node -e js"
+    "debug": "DEBUG=express:* nodemon ./server.js --exec babel-node -e js",
+    "clinic-list-reset": "node ./lib/clinics.js ./src/clinics.json reset",
+    "clinic-list-append": "node ./lib/clinics.js ./src/clinics.json append"
   },
   "author": "up899753@myport.ac.uk",
   "license": "MIT",
   "dependencies": {
+    "crypto-js": "^3.1.9-1",
     "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
     "nodemon": "^1.18.3",
     "sqlite3": "^4.0.2"
   },

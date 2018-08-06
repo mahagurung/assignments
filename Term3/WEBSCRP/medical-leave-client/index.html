@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Inform Medical Leave</title>
+
+    <!-- Custom styles for this template -->
+    <link href="./css/main.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="header_b"><header><div class="logo">XYZ Company Medical Leave Portal</div></header></div>
+      <div class="menu_b sidebar">
+        <ul>
+          <div id="s_inform" class="selected"><li><a href="#" onclick="populateMainContent('s_inform');return false;">Inform</a></li></div>
+          <div id="s_update"><li><a href="#" onclick="populateMainContent('s_update');return false;">Update</a></li></div>
+          <div id="s_myinfo"><li><a href="#" onclick="populateMainContent('s_myinfo');return false;">My Info</a></li></div>
+          <div id="s_clinics"><li><a href="#" onclick="populateMainContent('s_clinics');return false;">Clinics</a></li></div>
+          <div id="s_teaminfo" class="hidden"><li><a href="#" onclick="populateMainContent('s_teaminfo');return false;">Team Info</a></li></div>
+          <div id="s_pending" class="hidden"><li><a href="#" onclick="populateMainContent('s_pending');return false;">Pending</a></li></div>
+          <div id="s_logout"><li><a href="#" onclick="populateMainContent('s_logout');return false;">Logout</a></li></div>
+        </ul>
+      </div>
+
+      <div class="main_b">
+     </div>
+      <div class="footer_b"><footer>&copy; 2018 XYZ Company</footer></div>
+    </div>
+    <script src="js/script.js"></script>
+    <script>updateSideBar()</script>
+  </body>
+</html>
