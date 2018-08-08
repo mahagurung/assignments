@@ -338,6 +338,10 @@ menuParser lecturerList = do
         putStrLn $ printf "Lecturer database written to file %s" databaseFile
         putStrLn "Exiting.."
 
+      | otherwise = do
+        putStrLn "Invalid input"
+        menuParser l
+
 main :: IO ()
 main = do
   d <- readFile databaseFile

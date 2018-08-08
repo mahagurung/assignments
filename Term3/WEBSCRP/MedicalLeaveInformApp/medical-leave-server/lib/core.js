@@ -84,9 +84,9 @@ function login(req, res) {
 }
 
 /**
- * Get employee details by id
+ * Get employee details
  */
-function getEmployeeDetails(req, res) {
+function getEmployeeDetailsById(req, res) {
   let sql = `SELECT id, first_name, last_name, status, supervisor, picture, designation FROM employees WHERE status = 1 and id = ?`;
   let params = [req.params.id]
 
@@ -115,6 +115,54 @@ function getEmployeeDetails(req, res) {
   }, function(err) {
     console.error(err.message);
     // throw new Error(reason); Later add a global error handling function and uncomment this
+  });
+}
+
+function getEmployeeDetailsByParams(req, res) {
+  let sql = `SELECT id, first_name, last_name, status, supervisor, picture, designation FROM employees`;
+  let params = [];
+
+  ['id', 'first_name', 'last_name', 'status', 'supervisor', 'picture', 'designation'].forEach(function(val) {
+    if (req.query[val]) {
+      if (sql.search('WHERE') == -1) {
+        sql += ` WHERE ${val} = ?`;
+      } else {
+        sql += ` AND ${val} = ?`;
+      }
+
+      params.push(req.query[val]);
+    }
+  });
+
+  console.log(sql);
+  console.log(params);
+
+  db.conn.all(sql, params, function(err, rows) {
+    let result = {
+      success:1,
+      employees: []
+    };
+
+    if (err) {
+      console.error(err.message);
+    } else {
+      rows.forEach(function(row) {
+        let employee = {
+          id: row.id,
+          first_name: row.first_name,
+          last_name: row.last_name,
+          status: row.status,
+          supervisor: row.supervisor,
+          picture: row.picture,
+          designation: row.designation
+        };
+
+        result.employees.push(employee);
+      });
+
+      helper.debug_print(`${req.originalUrl}: Sending ${JSON.stringify(result)}`);
+      res.send(result);
+    }
   });
 }
 
@@ -328,6 +376,7 @@ function getMedicalLeaveById(req, res) {
       } else {
         sql += `AND status = ?`;
       }
+      params.push(req.query.status);
     }
 
     db.conn.all(sql, params, function(err, rows) {
@@ -490,7 +539,8 @@ function getClinicById(req, res) {
 
 module.exports.uploadMc = uploadMc;
 module.exports.login = login;
-module.exports.getEmployeeDetails = getEmployeeDetails;
+module.exports.getEmployeeDetailsById = getEmployeeDetailsById;
+module.exports.getEmployeeDetailsByParams = getEmployeeDetailsByParams;
 module.exports.getEmployeeRole = getEmployeeRole;
 module.exports.getEmployeeTasks = getEmployeeTasks;
 module.exports.getLeavesByEmployeeId = getLeavesByEmployeeId;

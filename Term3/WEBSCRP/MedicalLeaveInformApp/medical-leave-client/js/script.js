@@ -1,6 +1,6 @@
 "use strict";
 
-const medicalLeaveServer = "http://192.168.1.122:3000";
+const medicalLeaveServer = "http://localhost:3000";
 
 /*
 Leave request status
@@ -217,6 +217,7 @@ async function login() {
 
     if (response.success == 1) {
       document.cookie = `employee_id=${response.employee_id}; path=/`;
+      console.log(document.cookie);
       window.location.href = "index.html";
     } else {
       alert("Wrong Username/Password!");
@@ -256,20 +257,27 @@ function logoutSession() {
 }
 
 async function updateSideBar() {
-  try {
-    let response = await asyncFetchGet('/employee/role/' + employeeId());
+  console.log(document.cookie);
+  let id = employeeId();
 
-    if (response.role == "supervisor") {
-      showElement('s_teaminfo');
-      showElement('s_pending');
-      populateMainContent('s_pending');
-    } else {
-      hideElement('s_teaminfo');
-      hideElement('s_pending');
-      populateMainContent('s_inform');
+  if (id) {
+    try {
+      let response = await asyncFetchGet('/employee/role/' + employeeId());
+
+      if (response.role == "supervisor") {
+        showElement('s_teaminfo');
+        showElement('s_pending');
+        populateMainContent('s_pending');
+      } else {
+        hideElement('s_teaminfo');
+        hideElement('s_pending');
+        populateMainContent('s_inform');
+      }
+    } catch(error) {
+      handleError(error);
     }
-  } catch(error) {
-    handleError(error);
+  } else {
+    window.location.href = "login.html";
   }
 }
 
@@ -349,6 +357,7 @@ async function informLeave() {
 
     if (response.success == 1) {
       alert("Your supervisor has been informed of the leave request!");
+      populateMyInfo();
     }
   } catch(error) {
     handleError(error);
@@ -507,6 +516,7 @@ async function updateLeaveRequest(id) {
 
         if (response.success == 1) {
           alert("Leave request updated!");
+          populateMyInfo();
         }
       } else {
         // Create new leave request
@@ -514,6 +524,7 @@ async function updateLeaveRequest(id) {
 
         if (response.success == 1) {
           alert("Your supervisor has been informed of the leave request!");
+          populateMyInfo();
         }
       }
     }
@@ -560,16 +571,38 @@ async function populatePending() {
 }
 
 async function searchEmployee() {
-  let id = document.getElementById('search-box').value;
+  let fullNameArray = document.getElementById('search-box').value.split(' ');
+  let firstName = fullNameArray[0];
+  let lastName = fullNameArray[1];
+  let id;
 
   try {
-    let response = await asyncFetchGet('/employee/'+id);
+
+    //get the employeeID
+    let url = `/employee?first_name=${firstName}`;
+
+    if (lastName) {
+      url += `&last_name=${lastName}`;
+    }
+
+    let response = await asyncFetchGet(url);
 
     if (response.success == 1) {
-      if (response.supervisor == employeeId()) {
-        populateEmployeeInfo(id);
+      if (response.employees.length !== 0) {
+        id = response.employees[0].id;
+
+        // Fetch the employees details
+        response = await asyncFetchGet('/employee/'+id);
+
+        if (response.success == 1) {
+          if (response.supervisor == employeeId()) {
+            populateEmployeeInfo(id);
+          } else {
+            alert("You can view your direct report's details only!")
+          }
+        }
       } else {
-        alert("You can view your direct report's details only!")
+        alert("Employee not found!");
       }
     }
   } catch(error) {
@@ -584,7 +617,7 @@ async function populateEmployeeInfo(id) {
   let htmlString = `<div class="page-title"><h4>Employee Details</h4><hr></div>
                     <form class="generic-form" id="employee-search" action="#">
                       <div class="login-form">
-                        <input type="search" id="search-box" minlength="6" maxlength="6" placeholder="Employee Id" required>
+                        <input type="search" id="search-box" placeholder="Employee Name" required>
                         <label for="search-box"><img src="./images/search.svg" style="padding-left: 5px" width="20px" onclick="searchEmployee()"></label>
                       </div>
                     </form>`;
@@ -722,7 +755,8 @@ async function updateLeaveStatus(leaveId, status) {
     let response = await asyncFetchPut('/medicalleave/' + leaveId, data);
 
     if (response.success == 1) {
-        alert("Leave status updated!");
+      alert("Leave status updated!");
+      populatePending();
     }
   } catch(error) {
     handleError(error);

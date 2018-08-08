@@ -40,7 +40,8 @@ app.listen(config.port, config.ip, function () {
  */
 app.post('/upload/mc', core.uploadMc);
 app.post('/login', core.login);
-app.get('/employee/:id', core.getEmployeeDetails);
+app.get('/employee/:id', core.getEmployeeDetailsById);
+app.get('/employee', core.getEmployeeDetailsByParams);
 app.get('/employee/role/:id', core.getEmployeeRole);
 app.get('/employee/tasks/:id', core.getEmployeeTasks);
 app.get('/employee/leaves/:id', core.getLeavesByEmployeeId);

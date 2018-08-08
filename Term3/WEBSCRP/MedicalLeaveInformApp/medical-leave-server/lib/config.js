@@ -8,7 +8,7 @@ const port = 3000;
 const secret = 'mysuperstrongsecret';
 
 // Database settings
-const db_file = './database.db';
+const db_file = './src/database.db';
 
 // Debug log
 const debug = true;

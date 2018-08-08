@@ -1,0 +1,19 @@
+{
+  "clinics": [
+    {
+      "name": "Clinic 1",
+      "address": "Clinic 1 address",
+      "contact_no": "111111"
+    },
+    {
+      "name": "Clinic 2",
+      "address": "Clinic 2 address",
+      "contact_no": "111112"
+    },
+    {
+      "name": "Clinic 3",
+      "address": "Clinic 3 address",
+      "contact_no": "111113"
+    }
+  ]
+}

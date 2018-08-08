@@ -6,6 +6,7 @@ __pycache__
 **.log
 **.synctex.gz
 **.toc
+**.bib
 **.bbl
 **.bcf
 **.blg
