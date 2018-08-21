@@ -1,5 +1,7 @@
 -- MathFUN Assignment 2
 -- Author: UP899753
+module SolLecturerRating
+where
 
 import Data.List (delete, sortOn)
 import Text.Printf
@@ -16,39 +18,6 @@ type Rating = (StudentId, Int)
 
 data Lecturer = Lecturer StaffId Name Year [Rating]
                   deriving(Eq, Show, Read)
-
---
--- Test database
---
-
-testDatabase :: [Lecturer]
-testDatabase =
-  [
-    Lecturer "100120" "Lloy Ball" 2006
-      [("200110", 8), ("200098", 7), ("200132", 8), ("200054", 9)],
-    Lecturer "100121" "Sean Rooney" 2007
-      [("200098", 8), ("200132", 7), ("200110", 5)],
-    Lecturer "100122" "David Lee" 2006
-      [("200054", 8), ("200098", 7), ("200033", 8)],
-    Lecturer "100123" "Richard Lambourne" 2005
-      [("200132", 9), ("200054", 5), ("200110", 8), ("200033", 6), ("200097", 7)],
-    Lecturer "100124" "William Priddy" 2007
-      [("200110", 6), ("200132", 8), ("200033", 9), ("200054", 4)],
-    Lecturer "100125" "Ryan Millar" 2006
-      [("200098", 5), ("200133", 8), ("200097", 7), ("200110", 5)],
-    Lecturer "100126" "Riley Salmon" 2005
-      [("200110", 9), ("200098", 5), ("200132", 5), ("200054", 6)],
-    Lecturer "100127" "Thomas Hoff" 2003
-      [("200098", 9), ("200132", 8), ("200110", 5), ("200054", 6), ("200033", 7), ("200097", 8)],
-    Lecturer "100128" "Clayton Stanley" 2007
-      [("200110", 9), ("200132", 7), ("200054", 8), ("200110", 8), ("200033", 7)],
-    Lecturer "100129" "Kevin Hansen" 2002
-      [("200097", 7), ("200110", 5), ("200132", 6), ("200033", 4), ("200054", 7), ("200098", 8)],
-    Lecturer "100130" "Gabriel Gardner" 2006
-      [("200133", 8), ("200097", 6), ("200110", 5), ("200098", 8), ("200132", 9), ("200054", 8)],
-    Lecturer "100131" "Scott Touzinsky" 2004
-      [("200098", 6), ("200132", 8), ("200110", 8), ("200054", 9), ("200033", 7)]
-  ]
 
 --
 -- Helper Functions
@@ -347,42 +316,3 @@ main = do
   d <- readFile databaseFile
   let lecturerList = read d :: [Lecturer]
   menuParser lecturerList
-
---
--- Demo function to test basic functionality (without peristence - i.e.
--- testDatabase doesn't change and nothing is saved/loaded to/from file.
---
-
-demo :: Int -> IO ()
-demo 1 = do
-  putStrLn "Database before adding lecturer"
-  putStrLn $ showAllLecturers testDatabase
-  let newDatabase = addNewLecturer "100132" "Matt Anderson" 2015 testDatabase
-  putStrLn "Added a new lecturer to the database"
-  putStrLn $ showAllLecturers newDatabase
-demo 2 = do
-  putStrLn "Show all lecturers in the database"
-  putStrLn $ showAllLecturers testDatabase
-demo 3 = do
-  putStrLn "Lecturers who joined in 2006"
-  let newDatabase = selectLecturersByYear 2006 testDatabase
-  putStrLn $ showAllLecturers newDatabase
-demo 4 = do
-  putStrLn "Lecturers with a rating of 7 or higher"
-  let newDatabase = selectLecturersByRating 7.0 testDatabase
-  putStrLn $ showAllLecturers newDatabase
-demo 5 = do
-  putStrLn "Average rating of all lecturers joined in 2007"
-  putStrLn $ printf "%.2f" (showAvgRatingForAllLecturers 2007 testDatabase)
-demo 6 = do
-  putStrLn "Lecturers rated by student 200054"
-  putStrLn $ showLecturersRatedByStudent "200054" testDatabase
-demo 7 = do
-  putStrLn "Update rating for lecturer 100131 by student 200098 to 8"
-  let newDatabase = rateLecturer "200098" 8 "100131" testDatabase
-  putStrLn $ showAllLecturers newDatabase
-demo 8 = do
-  putStrLn "Lecturers joined between 2003 and 2005 inclusive"
-  let newDatabase = selectAndSortLecturersByYearRange 2003 2005 testDatabase
-  putStrLn $ showAllLecturers newDatabase
-demo _ = putStrLn "Problem statement not defined"
