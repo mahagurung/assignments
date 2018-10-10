@@ -44,7 +44,7 @@ def parse_csv_and_return_item_dict(input_csv, fieldnames):
 
                 item['imported'] = 'imported'.lower() in item['product'].lower()
                 item['taxable'] = not any(product in item['product'].lower() for product in non_taxable_items) 
-                
+
                 yield item
     except IOError as e:
         print("Failed to open {file}".format(file=input_csv))
