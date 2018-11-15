@@ -78,7 +78,7 @@ public class ParallelLaplaceEquation extends Thread {
         for(int iter=0; iter<NITER; iter++) {
 
             // Calculate new phi
-            for(int i=1; i<N-1; i++) {
+            for(int i=begin; i<end; i++) {
                 for(int j=1; j<N-1; j++) {
 
                     newPhi[i][j] = 0.25F * (phi[i][j-1] + phi[i][j+1] +
@@ -90,7 +90,7 @@ public class ParallelLaplaceEquation extends Thread {
             synch();
 
             // Update all phi values
-            for(int i=1; i<N-1; i++) {
+            for(int i=begin; i<end; i++) {
                 for(int j=1; j<N-1; j++) {
                     phi[i][j] = newPhi[i][j];
                 }
