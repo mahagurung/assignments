@@ -92,7 +92,7 @@ public class ParallelConwaysGameOfLife extends Thread {
             synch();
 
             // Update state of board values.
-            for(int i = 0; i < N; i++) {
+            for(int i = begin; i < end; i++) {
                 for(int j = 0; j < N; j++) {
                     switch (sums [i] [j]) {
                         case 2 : break;
